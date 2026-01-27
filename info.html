@@ -7,103 +7,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            background: #eef2f7; 
-            font-family: 'Noto Sans Ethiopic', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-
+        body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         .en-mode { font-family: 'Poppins', sans-serif !important; }
-
-        .card { 
-            width: 92%; 
-            max-width: 360px; 
-            background: white; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 25px rgba(0,45,75,0.15); 
-            overflow: hidden; 
-            border: 1px solid #cfe0eb; 
-            display: flex;
-            flex-direction: column;
-            /* የካርዱ ቁመት ከ home.html ጋር እንዲመሳሰል ተደርጓል */
-            height: 85vh; 
-        }
-
-        /* Top Bar */
-        .top-bar { 
-            background: #002d4b; 
-            padding: 12px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            color: #fff; 
-        }
+        .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,45,75,0.15); overflow: hidden; border: 1px solid #cfe0eb; display: flex; flex-direction: column; height: 85vh; }
+        .top-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
         .top-title { font-weight: 900; font-size: 18px; }
         .plus18 { color: #ff8c00; font-size: 24px; font-weight: 900; }
         .header-line { height: 3px; background: #ff8c00; width: 100%; }
-
-        /* Rules Content Area */
-        .content { 
-            padding: 15px; 
-            overflow-y: auto; 
-            flex-grow: 1; 
-            background: #fff; 
-        }
-        .rule-item { 
-            margin-bottom: 12px; 
-            border-bottom: 1px solid #eee; 
-            padding-bottom: 8px; 
-            display: flex; 
-            align-items: flex-start;
-        }
+        .content { padding: 15px; overflow-y: auto; flex-grow: 1; background: #fff; }
+        .rule-item { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; display: flex; align-items: flex-start; }
         .rule-number { color: #ff8c00; font-weight: 900; margin-right: 10px; }
         .rule-text { font-weight: 700; color: #002d4b; font-size: 13.5px; line-height: 1.5; }
-
-        /* Contact Section */
         .contact-box { background: #f9f9f9; padding: 10px 15px; border-top: 1px solid #ddd; }
         .contact-row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 5px 0; font-size: 13px; font-weight: 800; color: #002d4b; }
         .c-val { color: #ff0000; }
-
-        /* Bottom Action: Back Button Only */
-        .bottom-action {
-            padding: 12px 15px;
-            background: #fff;
-            display: flex;
-            justify-content: center;
-        }
-
-        .back-btn { 
-            background: #002d4b; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            width: 100%; /* ሙሉ ስፋት እንዲይዝ */
-            padding: 12px 0; 
-            font-weight: 800; 
-            font-size: 16px; 
-            cursor: pointer; 
-            text-decoration: none;
-            text-align: center;
-        }
-
-        /* Footer Language */
-        .footer { 
-            padding: 10px 15px; 
-            border-top: 2px solid #002d4b; 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 14px; 
-            font-weight: 700; 
-            background: #fff;
-        }
+        .bottom-action { padding: 12px 15px; background: #fff; display: flex; justify-content: center; }
+        .back-btn { background: #002d4b; color: white; border: none; border-radius: 8px; width: 100%; padding: 12px 0; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; text-align: center; }
+        .footer { padding: 10px 15px; border-top: 2px solid #002d4b; display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; background: #fff; }
         .lang-btn { cursor: pointer; color: #002d4b; }
         .active-lang { color: #ff8c00 !important; }
-
         .content::-webkit-scrollbar { width: 4px; }
         .content::-webkit-scrollbar-thumb { background: #ff8c00; border-radius: 10px; }
     </style>
@@ -194,6 +116,5 @@
 
     window.onload = () => { setLang('am'); };
 </script>
-
 </body>
 </html>
