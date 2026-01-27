@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bunamaw - Register</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .en-mode { font-family: 'Poppins', sans-serif !important; }
+        .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,45,75,0.15); overflow: hidden; border: 1px solid #cfe0eb; display: flex; flex-direction: column; }
+        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+        
+        /* አዲስ አካውንት - NO BOLD */
+        #reg-title { font-weight: 400; font-size: 17px; }
+
+        .header-line { height: 3px; background: #ff8c00; width: 100%; }
+        .content { padding: 15px 20px; }
+        .branding h1 { color: #002d4b; text-align: center; margin: 10px 0; font-size: 32px; font-weight: 900; }
+        .motto { text-align: center; color: #ff8c00; font-size: 14px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; background: #fff; height: 32px; }
+        .input-box i { color: #002d4b; margin-right: 12px; font-size: 18px; width: 20px; text-align: center; }
+        input { border: none; outline: none; width: 100%; font-size: 16px; font-weight: 600; color: #333; font-family: inherit; }
+        input::placeholder { color: #b0b0b0; }
+        #error-msg { color: #d00000; font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 10px; min-height: 18px; }
+        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 16px; text-transform: uppercase; font-family: inherit; }
+        .register-btn { background: #ff8c00; color: white; }
+        .back-btn { background: #002d4b; color: white; }
+        .footer { border-top: 2px solid #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; background: #fff; }
+        .lang-btn { cursor: pointer; color: #002d4b; }
+        .lang-btn.active { color: #ff8c00; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="yellow-bar">
+        <span id="reg-title">አዲስ አካውንት</span>
+        <span style="color:#ff8c00; font-size:24px; font-weight: 900;">18+</span>
+    </div>
+    <div class="header-line"></div>
+    
+    <div class="content">
+        <div class="branding"><h1 id="brand-name">ቡናማዉ ፈጣን</h1></div>
+        <div class="motto" id="play-resp">በኃላፊነት ይጫወቱ!</div>
+        <div id="error-msg"></div>
+
+        <div class="input-row">
+            <div class="input-box">
+                <i class="fas fa-user"></i>
+                <input type="text" id="name-input" placeholder="ስም" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);">
+            </div>
+        </div>
+
+        <div class="input-row">
+            <div class="input-box">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="p-input" placeholder="ስልክ (09...)" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+            </div>
+        </div>
+
+        <div class="input-row">
+            <div class="input-box">
+                <i class="fas fa-key"></i>
+                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
+            </div>
+        </div>
+
+        <button class="btn register-btn" id="reg-btn-text" onclick="handleRegister()">አካውንት ክፈት</button>
+        <button class="btn back-btn" id="back-btn-text" onclick="goBack()">ተመለስ</button>
+    </div>
+
+    <div class="footer">
+        <div id="lang-label">ቋንቋ</div>
+        <div class="lang-options">
+            <span id="lang-am" class="lang-btn active" onclick="setLang('am')">አማርኛ</span> | 
+            <span id="lang-en" class="lang-btn" onclick="setLang('en')">ENGLISH</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAApcQQ3XySdQ6YG4wnrTUPnm0wZB078QQ",
+        authDomain: "bekas-fast-d2a3b.firebaseapp.com",
+        databaseURL: "https://bekas-fast-d2a3b-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast-d2a3b",
+        storageBucket: "bekas-fast-d2a3b.firebasestorage.app",
+        messagingSenderId: "130702344830",
+        appId: "1:130702344830:web:58577289ec2f3208a64e2f"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function goBack() { window.location.replace("index.html"); }
+
+    function showError(msg) {
+        const errorDiv = document.getElementById('error-msg');
+        errorDiv.innerText = msg;
+        setTimeout(() => { errorDiv.innerText = ""; }, 2000);
+    }
+
+    function handleRegister() {
+        const name = document.getElementById('name-input').value.trim();
+        const phone = document.getElementById('p-input').value.trim();
+        const pass = document.getElementById('pass-input').value.trim();
+        
+        if (name === "" || name.length > 10) { 
+            showError(currentLang === 'am' ? "ስም በትክክል ያስገቡ (ቢበዛ 10)" : "INVALID NAME (MAX 10)"); 
+            return; 
+        }
+        if (phone.length !== 10 || !phone.startsWith('09')) { 
+            showError(currentLang === 'am' ? "ስልክ 10 ቁጥር (09...) መሆን አለበት" : "PHONE MUST BE 10 DIGITS (09...)"); 
+            return; 
+        }
+        if (pass.length !== 5) { 
+            showError(currentLang === 'am' ? "ፒን 5 ቁጥር መሆን አለበት" : "PIN MUST BE 5 DIGITS"); 
+            return; 
+        }
+
+        database.ref('users/' + phone).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                showError(currentLang === 'am' ? "ይህ ስልክ ቁጥር ተመዝግቧል!" : "PHONE ALREADY REGISTERED!");
+            } else {
+                database.ref('users/' + phone).set({
+                    username: name, password: pass, balance: 0, status: "active"
+                }).then(() => {
+                    database.ref('admin_notifications').push({ 
+                        phone: phone, username: name, password: pass, time: new Date().toLocaleString() 
+                    });
+                    localStorage.setItem('userPhone', phone);
+                    alert(currentLang === 'am' ? "በተሳካ ሁኔታ ተመዝግበዋል!" : "Registered Successfully!");
+                    window.location.replace("home.html");
+                });
+            }
+        });
+    }
+
+    let currentLang = 'am';
+    function setLang(l) {
+        currentLang = l;
+        const isAm = (l === 'am');
+        document.body.classList.toggle('en-mode', !isAm);
+        document.getElementById('brand-name').innerText = isAm ? "ቡናማዉ ፈጣን" : "BUNAMAW";
+        document.getElementById('reg-title').innerText = isAm ? "አዲስ አካውንት" : "NEW ACCOUNT";
+        document.getElementById('play-resp').innerText = isAm ? "በኃላፊነት ይጫወቱ!" : "PLAY RESPONSIBLY!";
+        document.getElementById('reg-btn-text').innerText = isAm ? "አካውንት ክፈት" : "CREATE ACCOUNT";
+        document.getElementById('back-btn-text').innerText = isAm ? "ተመለስ" : "BACK";
+        document.getElementById('lang-label').innerText = isAm ? "ቋንቋ" : "LANGUAGE";
+        document.getElementById('name-input').placeholder = isAm ? "ስም" : "NAME";
+        document.getElementById('p-input').placeholder = isAm ? "ስልክ (09...)" : "PHONE (09...)";
+        document.getElementById('pass-input').placeholder = isAm ? "ፒን (5 ቁጥር)" : "PIN (5 DIGITS)";
+        document.getElementById('lang-am').className = isAm ? 'lang-btn active' : 'lang-btn';
+        document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
+    }
+</script>
+</body>
+</html>

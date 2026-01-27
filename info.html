@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mita Betting - Rules</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background: #eef2f7; 
+            font-family: 'Noto Sans Ethiopic', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+
+        .en-mode { font-family: 'Poppins', sans-serif !important; }
+
+        .card { 
+            width: 92%; 
+            max-width: 360px; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 25px rgba(0,45,75,0.15); 
+            overflow: hidden; 
+            border: 1px solid #cfe0eb; 
+            display: flex;
+            flex-direction: column;
+            /* የካርዱ ቁመት ከ home.html ጋር እንዲመሳሰል ተደርጓል */
+            height: 85vh; 
+        }
+
+        /* Top Bar */
+        .top-bar { 
+            background: #002d4b; 
+            padding: 12px 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            color: #fff; 
+        }
+        .top-title { font-weight: 900; font-size: 18px; }
+        .plus18 { color: #ff8c00; font-size: 24px; font-weight: 900; }
+        .header-line { height: 3px; background: #ff8c00; width: 100%; }
+
+        /* Rules Content Area */
+        .content { 
+            padding: 15px; 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            background: #fff; 
+        }
+        .rule-item { 
+            margin-bottom: 12px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 8px; 
+            display: flex; 
+            align-items: flex-start;
+        }
+        .rule-number { color: #ff8c00; font-weight: 900; margin-right: 10px; }
+        .rule-text { font-weight: 700; color: #002d4b; font-size: 13.5px; line-height: 1.5; }
+
+        /* Contact Section */
+        .contact-box { background: #f9f9f9; padding: 10px 15px; border-top: 1px solid #ddd; }
+        .contact-row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 5px 0; font-size: 13px; font-weight: 800; color: #002d4b; }
+        .c-val { color: #ff0000; }
+
+        /* Bottom Action: Back Button Only */
+        .bottom-action {
+            padding: 12px 15px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .back-btn { 
+            background: #002d4b; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            width: 100%; /* ሙሉ ስፋት እንዲይዝ */
+            padding: 12px 0; 
+            font-weight: 800; 
+            font-size: 16px; 
+            cursor: pointer; 
+            text-decoration: none;
+            text-align: center;
+        }
+
+        /* Footer Language */
+        .footer { 
+            padding: 10px 15px; 
+            border-top: 2px solid #002d4b; 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 14px; 
+            font-weight: 700; 
+            background: #fff;
+        }
+        .lang-btn { cursor: pointer; color: #002d4b; }
+        .active-lang { color: #ff8c00 !important; }
+
+        .content::-webkit-scrollbar { width: 4px; }
+        .content::-webkit-scrollbar-thumb { background: #ff8c00; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="top-bar">
+        <span class="top-title" id="top-bar-text">መረጃ እና መመሪያ</span>
+        <span class="plus18">18+</span>
+    </div>
+    <div class="header-line"></div>
+
+    <div class="content" id="rules-container"></div>
+
+    <div class="contact-box">
+        <div class="contact-row"><span>TELEBIRR:</span> <span class="c-val">0978272061</span></div>
+        <div class="contact-row"><span>TELEGRAM:</span> <span style="color:#0088cc">@bekasfastbot</span></div>
+    </div>
+
+    <div class="bottom-action">
+        <button class="back-btn" id="btn-back" onclick="window.history.back()">ተመለስ</button>
+    </div>
+
+    <div class="footer">
+        <div id="txt-lang">ቋንቋ</div>
+        <div>
+            <span id="am-btn" class="lang-btn active-lang" onclick="setLang('am')">አማርኛ</span> | 
+            <span id="en-btn" class="lang-btn" onclick="setLang('en')">ENGLISH</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'am';
+
+    const rulesData = {
+        am: [
+            "የቴሌ ብር መቀበያ ቁጥራችን 0978272061 ነው፤ ገንዘብ ሲልኩ የትራንዛክሽን ቁጥር እና የገንዘቡን መጠን አብረው ማስገባትዎን አይዘንጉ።",
+            "ጨዋታዎች ሁሉ በ10 ብር እና በ10 ብዜቶች ስለሆኑ ድፍን ቁጥሮችን ብቻ ይጠቀሙ።",
+            "ማንኛውም ጨዋታ ጨዋታው ከመካሄዱ በፊት መሆን አለበት።",
+            "በ Mita Betting ከ10 ብር በታች ምንም ዓይነት የጨዋታ ዓይነት የለም።",
+            "ተጫዋቾች የጠየቁት ገንዘብ በ10 ደቂቃ ባልሞላ ጊዜ ውስጥ ገቢ ይሆናል።",
+            "የአሸናፊነት ገንዘብ የሚላከው አካውንቱ በተከፈተበት ስልክ ቁጥር ነው።",
+            "ቁጥሮች ተይዘው እስካልተለቀቁ ድረስ እንደተያዙ ነው የሚቆጠረው።",
+            "በዚህ ጨዋታ በጊዜያዊነት የሚከፈለው 900 ETB ሲሆን፣ በቀጣይ እስከ 20,000 ETB የሚያደርሱ አማራጮች ይጠብቁዎታል።",
+            "ተጫዋቾች ለሚገጥማቸው ችግር Mita Betting ሙሉ ኃላፊነቱን ይወስዳል።",
+            "ጥያቄዎትን በማንኛውም ሰዓት እናስተናግዳለን።",
+            "በኃላፊነት ይጫወቱ። መልካም ዕድል!"
+        ],
+        en: [
+            "Our Telebirr receiver number is 0978272061; don't forget to include the transaction number.",
+            "All games are in 10 ETB and multiples of 10, use round numbers only.",
+            "Any play must be made before the game takes place.",
+            "In Mita Betting, there is no type of game below 10 ETB.",
+            "Requested withdrawals will be processed within less than 10 minutes.",
+            "Winnings will be sent to the registered phone number.",
+            "Numbers are considered held until they are released.",
+            "The temporary payout is 900 ETB, with future options up to 20,000 ETB.",
+            "Mita Betting takes full responsibility for any game errors.",
+            "We are available 24/7 to address your questions.",
+            "Play responsibly. Good luck!"
+        ]
+    };
+
+    function displayRules() {
+        const container = document.getElementById('rules-container');
+        container.innerHTML = '';
+        rulesData[currentLang].forEach((rule, index) => {
+            const div = document.createElement('div');
+            div.className = 'rule-item';
+            div.innerHTML = `<span class="rule-number">${index + 1}.</span><span class="rule-text">${rule}</span>`;
+            container.appendChild(div);
+        });
+    }
+
+    function setLang(l) {
+        currentLang = l;
+        const isEn = l === 'en';
+        document.body.classList.toggle('en-mode', isEn);
+        document.getElementById('top-bar-text').innerText = isEn ? "RULES & INFO" : "መረጃ እና መመሪያ";
+        document.getElementById('btn-back').innerText = isEn ? "BACK" : "ተመለስ";
+        document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
+        document.getElementById('am-btn').className = isEn ? 'lang-btn' : 'lang-btn active-lang';
+        document.getElementById('en-btn').className = isEn ? 'lang-btn active-lang' : 'lang-btn';
+        displayRules();
+    }
+
+    window.onload = () => { setLang('am'); };
+</script>
+
+</body>
+</html>

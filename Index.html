@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bunamaw - Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background: #eef2f7; 
+            font-family: 'Noto Sans Ethiopic', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+
+        .en-mode {
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,45,75,0.15); overflow: hidden; border: 1px solid #cfe0eb; display: flex; flex-direction: column; }
+        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 18px; color: #fff; }
+        .header-line { height: 3px; background: #ff8c00; width: 100%; }
+        .content { padding: 15px 20px; flex-grow: 1; }
+        .dt-section { border-bottom: 2px solid #002d4b; padding-bottom: 8px; margin-bottom: 15px; }
+        .dt-row { font-weight: 800; font-size: 17px; color: #002d4b; margin-bottom: 2px; text-transform: uppercase; }
+        
+        .branding h1 { color: #8B4513; text-align: center; margin: 10px 0; font-size: 38px; font-weight: 900; letter-spacing: -1px; }
+        .motto { text-align: center; color: #002d4b; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; line-height: 1.2; }
+        
+        .input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; flex-grow: 1; background: #fff; height: 32px; }
+        .input-box i { color: #002d4b; margin-right: 12px; font-size: 18px; width: 20px; text-align: center; }
+        
+        input { border: none; outline: none; width: 100%; font-size: 18px; font-weight: 600; color: #333; font-family: inherit; }
+        
+        /* ማስተካከያ፡ Placeholder ቀለሙ ፈዘዝ ያለ (Light Color) እንዲሆን */
+        input::placeholder { 
+            font-weight: 600; 
+            color: #b0b0b0 !important; 
+        }
+
+        #error-msg { color: #d00000; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 10px; min-height: 18px; text-transform: uppercase; }
+        
+        /* "ጠፋብኝ" ቀይ ቀለም */
+        .lost-link { color: #ff0000 !important; font-size: 13px; font-weight: 900; text-decoration: none; border: 1px solid #ff0000; padding: 6px 8px; border-radius: 4px; background-color: #fff; white-space: nowrap; }
+        
+        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 19px; text-transform: uppercase; font-family: inherit; }
+        .login-btn { background: #002d4b; color: white; }
+        .register-btn { background: #ff8c00; color: white; }
+        
+        .footer { border-top: 2px solid #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; background: #fff; }
+        .lang-btn { cursor: pointer; color: #002d4b; }
+        .lang-btn.active { color: #ff8c00; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="yellow-bar">
+        <span id="promo-tag">ባለ 20, 50, 100, 200</span>
+        <span style="color:#ff8c00; font-size:26px">18+</span>
+    </div>
+    <div class="header-line"></div>
+    <div class="content">
+        <div class="dt-section">
+            <div class="dt-row" id="date-label">DATE: LOADING...</div>
+            <div class="dt-row" id="time-label">TIME: 00:00:00</div>
+        </div>
+        <div class="branding"><h1 id="brand-name">ቡናማዉ ፈጣን</h1></div>
+        <div class="motto" id="motto">ፈጣን ቀልጣፋ አስተማማኝ</div>
+        <div id="error-msg"></div>
+        <div class="input-row">
+            <div class="input-box">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="p-input" placeholder="09..." oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+            </div>
+        </div>
+        <div class="input-row">
+            <div class="input-box">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="pass-input" placeholder="ሚስጥር ቁጥር">
+            </div>
+            <a href="lost_password.html" class="lost-link" id="lost-btn">ጠፋብኝ</a>
+        </div>
+        <button class="btn login-btn" id="l-btn" onclick="handleLogin()">ግባ</button>
+        <button class="btn register-btn" id="r-btn" onclick="window.location.href='register.html'">ተመዝገብ</button>
+    </div>
+    <div class="footer">
+        <div id="l-text">ቋንቋ</div>
+        <div class="lang-options">
+            <span id="lang-am" class="lang-btn active" onclick="setLang('am')">አማርኛ</span> | 
+            <span id="lang-en" class="lang-btn" onclick="setLang('en')">ENGLISH</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAApcQQ3XySdQ6YG4wnrTUPnm0wZB078QQ",
+        authDomain: "bekas-fast-d2a3b.firebaseapp.com",
+        databaseURL: "https://bekas-fast-d2a3b-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast-d2a3b",
+        storageBucket: "bekas-fast-d2a3b.firebasestorage.app",
+        messagingSenderId: "130702344830",
+        appId: "1:130702344830:web:58577289ec2f3208a64e2f"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let currentLang = 'am';
+
+    function updateClock() {
+        const n = new Date();
+        const mEN = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        const mAM = ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"];
+        let hours = n.getHours(); 
+        const ampmAM = hours >= 12 ? ' ከሰዓት' : ' ጠዋት';
+        const ampmEN = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12 || 12;
+        
+        if(currentLang === 'am') {
+            const timeStr = hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
+            document.getElementById('date-label').innerText = "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
+            document.getElementById('time-label').innerText = "ሰዓት: " + timeStr;
+        } else {
+            const timeStrEN = hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmEN;
+            document.getElementById('date-label').innerText = "DATE: " + mEN[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
+            document.getElementById('time-label').innerText = "TIME: " + timeStrEN;
+        }
+    }
+    setInterval(updateClock, 1000);
+
+    function setLang(l) {
+        currentLang = l;
+        const body = document.body;
+        
+        if (l === 'en') {
+            body.classList.add('en-mode');
+        } else {
+            body.classList.remove('en-mode');
+        }
+
+        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ ፈጣን" : "BUNAMAW";
+        document.getElementById('l-btn').innerText = (l === 'am') ? "ግባ" : "LOG IN";
+        document.getElementById('r-btn').innerText = (l === 'am') ? "ተመዝገብ" : "REGISTER";
+        document.getElementById('l-text').innerText = (l === 'am') ? "ቋንቋ" : "LANGUAGE";
+        document.getElementById('pass-input').placeholder = (l === 'am') ? "ሚስጥር ቁጥር" : "PASSWORD"; 
+        document.getElementById('lost-btn').innerText = (l === 'am') ? "ጠፋብኝ" : "LOST";
+        document.getElementById('motto').innerText = (l === 'am') ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
+        
+        document.getElementById('lang-am').className = l === 'am' ? 'lang-btn active' : 'lang-btn';
+        document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
+        updateClock();
+    }
+
+    window.onload = function() { setLang('am'); };
+
+    function handleLogin() {
+        const phone = document.getElementById('p-input').value.trim();
+        const pass = document.getElementById('pass-input').value.trim();
+        const errorDiv = document.getElementById('error-msg');
+
+        if (phone === "" || pass === "") {
+            errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFORMATION";
+            return;
+        }
+
+        errorDiv.innerText = currentLang === 'am' ? "በመግባት ላይ..." : "LOGGING IN...";
+
+        database.ref('users/' + phone).once('value').then((snapshot) => {
+            const userData = snapshot.val();
+            if (userData && userData.password === pass) {
+                localStorage.setItem('userPhone', phone);
+                window.location.replace("home.html");
+            } else {
+                errorDiv.innerText = currentLang === 'am' ? "የስልክ ቁጥር ወይም ሚስጥር ቁጥር ተሳስቷል" : "WRONG PHONE OR PASSWORD";
+                setTimeout(() => { errorDiv.innerText = ""; }, 3000);
+            }
+        }).catch((err) => {
+            errorDiv.innerText = "Error: " + err.message;
+        });
+    }
+</script>
+</body>
+</html>

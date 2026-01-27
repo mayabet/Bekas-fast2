@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mita Betting - Deposit</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px 0; box-sizing: border-box; }
+        .en-mode { font-family: 'Poppins', sans-serif !important; }
+        .app-card { width: 92%; max-width: 360px; background: #fff; border-radius: 15px; border: 2px solid #002d4b; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+        .title-txt { font-weight: 900; font-size: 18px; }
+        .plus18 { color: #ff8c00; font-size: 20px; font-weight: 900; }
+        .header-line { height: 3px; background: #ff8c00; width: 100%; }
+        .content { padding: 15px; }
+        .user-card { background: #002d4b; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; color: #fff; }
+        .bal-label { font-weight: 700; font-size: 13px; display: block; margin-bottom: 3px; opacity: 0.8; }
+        .bal-val { font-weight: 900; font-size: 30px; color: #ff8c00; }
+        .instruction { background: #fff8e1; border-left: 5px solid #ff8c00; padding: 12px; margin-bottom: 15px; font-size: 13px; font-weight: 800; color: #333; line-height: 1.6; }
+        .tele-num { color: #d00000; font-size: 18px; font-weight: 900; display: block; margin-top: 5px; }
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; font-weight: 900; font-size: 13px; color: #002d4b; margin-bottom: 5px; }
+        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px; background: #fff; }
+        .input-box input { border: none; outline: none; width: 100%; font-size: 17px; font-weight: 800; font-family: inherit; color: #002d4b; }
+        #msg-display { font-size: 13px; font-weight: 900; text-align: center; margin-bottom: 10px; min-height: 20px; }
+        .btn-stack { display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
+        .btn { padding: 14px; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; text-align: center; text-decoration: none; font-family: inherit; transition: 0.2s; }
+        .btn-main { background: #002d4b; color: white; }
+        .btn-back { background: #777; color: white; }
+        .lang-bar { padding: 15px; display: flex; justify-content: space-between; font-weight: 900; font-size: 14px; border-top: 2.5px solid #002d4b; background: #f9f9f9; }
+        .lang-btn { cursor: pointer; color: #002d4b; padding: 2px 8px; text-decoration: none; }
+        .lang-btn.active { color: #ff8c00; }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <div class="yellow-bar">
+        <span class="title-txt" id="title-name">ብር ማስገቢያ</span>
+        <span class="plus18">18+</span>
+    </div>
+    <div class="header-line"></div>
+
+    <div class="content">
+        <div class="user-card">
+            <span class="bal-label" id="txt-bal-label">ያለዎት ቀሪ ሂሳብ</span>
+            <div class="bal-val"><span id="user-balance">0.00</span> <small style="font-size:15px" id="txt-curr">ብር</small></div>
+        </div>
+
+        <div class="instruction" id="txt-instr">
+            በቴሌብር ወደዚህ ቁጥር ይላኩ፡
+            <span class="tele-num">0978272061</span>
+            ከዛም ኮዱን በትክክል ያስገቡ።
+        </div>
+
+        <div id="msg-display"></div>
+
+        <div class="input-group">
+            <label class="input-label" id="lbl-code">የትራንዛክሽን ኮድ (10 ዲጂት)</label>
+            <div class="input-box">
+                <input type="text" id="tr-input" placeholder="A1B2C3D4E5" maxlength="10" autocomplete="off" style="text-transform: uppercase;">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
+            <div class="input-box">
+                <input type="text" id="am-input" placeholder="0000" inputmode="numeric" maxlength="5" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="btn-stack">
+            <button onclick="handleDeposit()" class="btn btn-main" id="btn-submit">ብር አስገባ</button>
+            <a href="home.html" class="btn btn-back" id="btn-home">ተመለስ</a>
+        </div>
+    </div>
+
+    <div class="lang-bar">
+        <div id="txt-lang">ቋንቋ</div>
+        <div>
+            <span id="lang-am" class="lang-btn active" onclick="setLang('am')">አማርኛ</span> | 
+            <span id="lang-en" class="lang-btn" onclick="setLang('en')">ENGLISH</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- አዲሱ Firebase ኮንፊግሬሽን ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
+        authDomain: "bekas-fast2.firebaseapp.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast2",
+        storageBucket: "bekas-fast2.firebasestorage.app",
+        messagingSenderId: "267970590270",
+        appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const userPhone = localStorage.getItem('userPhone');
+
+    if (userPhone) {
+        database.ref('users/' + userPhone).on('value', (snapshot) => {
+            const userData = snapshot.val();
+            if (userData) document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+        });
+    }
+
+    // --- የተቀሩት ተግባራት (UI & Handling) ---
+    const trInput = document.getElementById('tr-input');
+    const amInput = document.getElementById('am-input');
+
+    trInput.oninput = function() {
+        let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (val.length > 10) val = val.substring(0, 10);
+        this.value = val;
+    };
+
+    amInput.oninput = function() {
+        let val = this.value.replace(/[^0-9]/g, '');
+        if (val.length > 5) val = val.substring(0, 5);
+        this.value = val;
+    };
+
+    let currentLang = 'am';
+
+    function showMsg(txt, color) {
+        const d = document.getElementById('msg-display');
+        d.innerText = txt; d.style.color = color;
+        setTimeout(() => d.innerText = "", 5000);
+    }
+
+    function handleDeposit() {
+        const code = trInput.value.trim();
+        const amount = parseInt(amInput.value.trim());
+
+        if (code.length !== 10) {
+            showMsg(currentLang === 'am' ? "ኮዱ በትክክል 10 ዲጂት መሆን አለበት!" : "CODE MUST BE 10 DIGITS!", "#d00000");
+            return;
+        }
+        if (isNaN(amount) || amount < 50) {
+            showMsg(currentLang === 'am' ? "ቢያንስ 50 ብር ያስገቡ!" : "MINIMUM 50 BIRR!", "#d00000");
+            return;
+        }
+
+        database.ref('deposit_requests').push({ 
+            phone: userPhone || "Unknown", transactionCode: code, amount: amount, status: "pending", time: new Date().toLocaleString() 
+        }).then(() => {
+            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል!" : "SUCCESS!", "#2e7d32");
+            trInput.value = ""; amInput.value = "";
+        });
+    }
+
+    function setLang(l) {
+        currentLang = l;
+        const isEn = l === 'en';
+        document.body.classList.toggle('en-mode', isEn);
+        document.getElementById('title-name').innerText = isEn ? "DEPOSIT" : "ብር ማስገቢያ";
+        document.getElementById('txt-bal-label').innerText = isEn ? "YOUR BALANCE" : "ያለዎት ቀሪ ሂሳብ";
+        document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
+        document.getElementById('lbl-code').innerText = isEn ? "TRANS. CODE (10 DIGITS)" : "የትራንዛክሽን ኮድ (10 ዲጂት)";
+        document.getElementById('lbl-amt').innerText = isEn ? "AMOUNT (MAX 5)" : "የገንዘብ መጠን (ቢበዛ 5)";
+        document.getElementById('btn-submit').innerText = isEn ? "SUBMIT" : "ብር አስገባ";
+        document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
+        document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
+        document.getElementById('txt-instr').innerHTML = isEn ? 'Send money via Telebirr to: <span class="tele-num">0978272061</span> Then enter exactly 10 digits.' : 'በቴሌብር ወደዚህ ቁጥር ይላኩ፡ <span class="tele-num">0978272061</span> ከዛም ኮዱን በትክክል ያስገቡ።';
+        document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
+        document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
+    }
+</script>
+</body>
+</html>
