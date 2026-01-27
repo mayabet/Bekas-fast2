@@ -3,59 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Login</title>
+    <title>Mita Betting - Login</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            background: #eef2f7; 
-            font-family: 'Noto Sans Ethiopic', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-
-        .en-mode {
-            font-family: 'Poppins', sans-serif !important;
-        }
-
+        body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .en-mode { font-family: 'Poppins', sans-serif !important; }
         .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,45,75,0.15); overflow: hidden; border: 1px solid #cfe0eb; display: flex; flex-direction: column; }
         .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 18px; color: #fff; }
         .header-line { height: 3px; background: #ff8c00; width: 100%; }
         .content { padding: 15px 20px; flex-grow: 1; }
         .dt-section { border-bottom: 2px solid #002d4b; padding-bottom: 8px; margin-bottom: 15px; }
         .dt-row { font-weight: 800; font-size: 17px; color: #002d4b; margin-bottom: 2px; text-transform: uppercase; }
-        
         .branding h1 { color: #8B4513; text-align: center; margin: 10px 0; font-size: 38px; font-weight: 900; letter-spacing: -1px; }
         .motto { text-align: center; color: #002d4b; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; line-height: 1.2; }
-        
         .input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
         .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; flex-grow: 1; background: #fff; height: 32px; }
         .input-box i { color: #002d4b; margin-right: 12px; font-size: 18px; width: 20px; text-align: center; }
-        
         input { border: none; outline: none; width: 100%; font-size: 18px; font-weight: 600; color: #333; font-family: inherit; }
-        
-        /* ማስተካከያ፡ Placeholder ቀለሙ ፈዘዝ ያለ (Light Color) እንዲሆን */
-        input::placeholder { 
-            font-weight: 600; 
-            color: #b0b0b0 !important; 
-        }
-
+        input::placeholder { font-weight: 600; color: #b0b0b0 !important; }
         #error-msg { color: #d00000; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 10px; min-height: 18px; text-transform: uppercase; }
-        
-        /* "ጠፋብኝ" ቀይ ቀለም */
         .lost-link { color: #ff0000 !important; font-size: 13px; font-weight: 900; text-decoration: none; border: 1px solid #ff0000; padding: 6px 8px; border-radius: 4px; background-color: #fff; white-space: nowrap; }
-        
         .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 19px; text-transform: uppercase; font-family: inherit; }
         .login-btn { background: #002d4b; color: white; }
         .register-btn { background: #ff8c00; color: white; }
-        
         .footer { border-top: 2px solid #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; background: #fff; }
         .lang-btn { cursor: pointer; color: #002d4b; }
         .lang-btn.active { color: #ff8c00; }
@@ -103,14 +78,15 @@
 </div>
 
 <script>
+    // --- Updated Firebase Configuration for bekas-fast2 ---
     const firebaseConfig = {
-        apiKey: "AIzaSyAApcQQ3XySdQ6YG4wnrTUPnm0wZB078QQ",
-        authDomain: "bekas-fast-d2a3b.firebaseapp.com",
-        databaseURL: "https://bekas-fast-d2a3b-default-rtdb.firebaseio.com",
-        projectId: "bekas-fast-d2a3b",
-        storageBucket: "bekas-fast-d2a3b.firebasestorage.app",
-        messagingSenderId: "130702344830",
-        appId: "1:130702344830:web:58577289ec2f3208a64e2f"
+        apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
+        authDomain: "bekas-fast2.firebaseapp.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast2",
+        storageBucket: "bekas-fast2.firebasestorage.app",
+        messagingSenderId: "267970590270",
+        appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -128,35 +104,25 @@
         hours = hours % 12 || 12;
         
         if(currentLang === 'am') {
-            const timeStr = hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
             document.getElementById('date-label').innerText = "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
-            document.getElementById('time-label').innerText = "ሰዓት: " + timeStr;
+            document.getElementById('time-label').innerText = "ሰዓት: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
         } else {
-            const timeStrEN = hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmEN;
             document.getElementById('date-label').innerText = "DATE: " + mEN[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
-            document.getElementById('time-label').innerText = "TIME: " + timeStrEN;
+            document.getElementById('time-label').innerText = "TIME: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmEN;
         }
     }
     setInterval(updateClock, 1000);
 
     function setLang(l) {
         currentLang = l;
-        const body = document.body;
-        
-        if (l === 'en') {
-            body.classList.add('en-mode');
-        } else {
-            body.classList.remove('en-mode');
-        }
-
-        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ ፈጣን" : "BUNAMAW";
+        document.body.classList.toggle('en-mode', l === 'en');
+        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ ፈጣን" : "MITA FAST";
         document.getElementById('l-btn').innerText = (l === 'am') ? "ግባ" : "LOG IN";
         document.getElementById('r-btn').innerText = (l === 'am') ? "ተመዝገብ" : "REGISTER";
         document.getElementById('l-text').innerText = (l === 'am') ? "ቋንቋ" : "LANGUAGE";
         document.getElementById('pass-input').placeholder = (l === 'am') ? "ሚስጥር ቁጥር" : "PASSWORD"; 
         document.getElementById('lost-btn').innerText = (l === 'am') ? "ጠፋብኝ" : "LOST";
         document.getElementById('motto').innerText = (l === 'am') ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
-        
         document.getElementById('lang-am').className = l === 'am' ? 'lang-btn active' : 'lang-btn';
         document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
         updateClock();
@@ -169,7 +135,7 @@
         const pass = document.getElementById('pass-input').value.trim();
         const errorDiv = document.getElementById('error-msg');
 
-        if (phone === "" || pass === "") {
+        if (!phone || !pass) {
             errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFORMATION";
             return;
         }
