@@ -6,130 +6,70 @@
     <title>Mita Betting - Withdraw</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            background: #eef2f7; 
-            font-family: 'Noto Sans Ethiopic', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-        }
+        body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .en-mode { font-family: 'Poppins', sans-serif !important; }
-
-        .app-card { 
-            width: 92%; 
-            max-width: 360px; 
-            background: #fff; 
-            border-radius: 15px; 
-            border: 2px solid #002d4b; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
-        .title-txt { font-weight: 900; font-size: 18px; }
-        .plus18 { color: #ff8c00; font-size: 20px; font-weight: 900; }
+        .app-card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,45,75,0.15); overflow: hidden; border: 1px solid #cfe0eb; }
+        .top-bar { background: #002d4b; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
+        .title { font-weight: 900; font-size: 19px; }
         .header-line { height: 3px; background: #ff8c00; width: 100%; }
-
-        .content { padding: 15px; }
-        
-        .user-card { 
-            background: #002d4b; 
-            border-radius: 12px; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            text-align: center; 
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0,45,75,0.3);
-        }
-        .bal-label { font-weight: 700; font-size: 13px; display: block; margin-bottom: 3px; opacity: 0.8; }
-        .bal-val { font-weight: 900; font-size: 30px; color: #ff8c00; }
-
-        .instruction { background: #fff8e1; border-left: 5px solid #ff8c00; padding: 12px; margin-bottom: 15px; font-size: 13px; font-weight: 800; color: #333; line-height: 1.6; text-align: center; }
-
+        .balance-section { background: #f0f4f7; padding: 15px; text-align: center; border-bottom: 1px solid #ddd; }
+        .bal-label { font-size: 13px; font-weight: 800; color: #555; margin-bottom: 5px; }
+        .bal-amount { font-size: 32px; font-weight: 900; color: #002d4b; }
+        .content { padding: 20px; }
+        .instr { font-size: 13px; font-weight: 700; color: #002d4b; margin-bottom: 15px; line-height: 1.4; text-align: center; }
         .input-group { margin-bottom: 15px; }
-        .input-label { display: block; font-weight: 900; font-size: 13px; color: #002d4b; margin-bottom: 5px; }
-        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px; background: #fff; }
-        input { border: none; outline: none; width: 100%; font-size: 20px; font-weight: 800; font-family: inherit; color: #002d4b; }
-
-        #msg-display { font-size: 13px; font-weight: 900; text-align: center; margin-bottom: 10px; min-height: 20px; }
-
-        .btn-stack { display: flex; flex-direction: column; gap: 10px; }
-        .btn { padding: 14px; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; text-align: center; text-decoration: none; font-family: inherit; transition: 0.2s; }
-        .btn-main { background: #c00000; color: white; } /* Withdraw uses Red color */
-        .btn-back { background: #777; color: white; }
-
-        .notice-box {
-            background: #f9f9f9;
-            border: 1.5px solid #ddd;
-            padding: 10px;
-            margin-top: 15px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #555;
-            text-align: center;
-            border-radius: 8px;
-        }
-
-        .lang-bar { 
-            padding: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            font-weight: 900; 
-            font-size: 14px; 
-            border-top: 2.5px solid #002d4b; 
-            background: #f9f9f9;
-        }
-        .lang-btn { cursor: pointer; color: #002d4b; padding: 2px 8px; text-decoration: none; }
-        .lang-btn.active { color: #ff8c00; }
+        label { display: block; font-size: 12px; font-weight: 800; color: #002d4b; margin-bottom: 5px; text-transform: uppercase; }
+        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px; display: flex; align-items: center; background: #fff; }
+        .input-box i { color: #002d4b; margin-right: 10px; font-size: 18px; }
+        input { border: none; outline: none; width: 100%; font-size: 18px; font-weight: 800; font-family: inherit; }
+        #msg-box { text-align: center; font-weight: 800; font-size: 14px; margin-bottom: 10px; min-height: 18px; }
+        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; font-size: 16px; text-transform: uppercase; font-family: inherit; margin-bottom: 10px; }
+        .withdraw-btn { background: #ff8c00; color: white; }
+        .back-btn { background: #002d4b; color: white; text-decoration: none; display: block; text-align: center; box-sizing: border-box; }
+        .notice { font-size: 11px; font-weight: 700; color: #ff0000; text-align: center; margin-top: 10px; }
+        .footer { border-top: 2px solid #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; }
+        .lang-btn { cursor: pointer; color: #002d4b; }
+        .active { color: #ff8c00; }
     </style>
 </head>
 <body>
 
 <div class="app-card">
-    <div class="yellow-bar">
-        <span class="title-txt" id="title-name">ብር ማውጫ</span>
-        <span class="plus18">18+</span>
+    <div class="top-bar">
+        <span class="title" id="title-name">ብር ማውጫ</span>
+        <span style="color:#ff8c00; font-size:24px; font-weight:900;">18+</span>
     </div>
     <div class="header-line"></div>
 
+    <div class="balance-section">
+        <div class="bal-label" id="txt-bal-label">ያለዎት ቀሪ ሂሳብ</div>
+        <div class="bal-amount"><span id="user-balance">0.00</span> <small style="font-size:14px" id="txt-curr">ብር</small></div>
+    </div>
+
     <div class="content">
-        <div class="user-card">
-            <span class="bal-label" id="txt-bal-label">ያለዎት ቀሪ ሂሳብ</span>
-            <div class="bal-val"><span id="user-balance">0.00</span> <small style="font-size:15px" id="txt-curr">ብር</small></div>
-        </div>
-
-        <div class="instruction" id="txt-instr">
-            ማውጣት የሚፈልጉትን የገንዘብ መጠን ከታች ያስገቡ።
-        </div>
-
-        <div id="msg-display"></div>
+        <div id="msg-box"></div>
+        <div class="instr" id="txt-instr">ማውጣት የሚፈልጉትን የገንዘብ መጠን ከታች ያስገቡ።</div>
 
         <div class="input-group">
-            <label class="input-label" id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
+            <label id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
             <div class="input-box">
-                <input type="number" id="am-input" placeholder="00000" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5); this.value = this.value.replace(/[^0-9]/g, '');">
+                <i class="fas fa-money-bill-wave"></i>
+                <input type="number" id="withdraw-amount" placeholder="0.00" oninput="this.value = this.value.slice(0, 5);">
             </div>
         </div>
 
-        <div class="btn-stack">
-            <button onclick="handleWithdraw()" class="btn btn-main" id="btn-submit">ብር አውጣ</button>
-            <a href="home.html" class="btn btn-back" id="btn-home">ተመለስ</a>
-        </div>
-
-        <div class="notice-box" id="bottom-notice">
-            የጠየቁት ገንዘብ በተመዘገቡበት የቴሌብር ቁጥር በ 10 ደቂቃ ውስጥ ይላካል።
-        </div>
+        <button class="btn withdraw-btn" onclick="handleWithdraw()" id="btn-submit">ብር አውጣ</button>
+        <a href="home.html" class="btn back-btn" id="btn-home">ተመለስ</a>
+        
+        <div class="notice" id="bottom-notice">የጠየቁት ገንዘብ በ 10 ደቂቃ ውስጥ አካውንትዎ ላይ ገቢ ይሆናል።</div>
     </div>
 
-    <div class="lang-bar">
+    <div class="footer">
         <div id="txt-lang">ቋንቋ</div>
         <div>
             <span id="lang-am" class="lang-btn active" onclick="setLang('am')">አማርኛ</span> | 
@@ -139,70 +79,74 @@
 </div>
 
 <script>
+    // --- Updated Firebase Config ---
     const firebaseConfig = {
-        apiKey: "AIzaSyAApcQQ3XySdQ6YG4wnrTUPnm0wZB078QQ",
-        authDomain: "bekas-fast-d2a3b.firebaseapp.com",
-        databaseURL: "https://bekas-fast-d2a3b-default-rtdb.firebaseio.com",
-        projectId: "bekas-fast-d2a3b",
-        storageBucket: "bekas-fast-d2a3b.firebasestorage.app",
-        messagingSenderId: "130702344830",
-        appId: "1:130702344830:web:58577289ec2f3208a64e2f"
+        apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
+        authDomain: "bekas-fast2.firebaseapp.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast2",
+        storageBucket: "bekas-fast2.firebasestorage.app",
+        messagingSenderId: "267970590270",
+        appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
     const userPhone = localStorage.getItem('userPhone');
     let currentBalance = 0;
-
-    if (!userPhone) {
-        window.location.replace("index.html");
-    } else {
-        database.ref('users/' + userPhone).on('value', (snapshot) => {
-            const userData = snapshot.val();
-            if (userData) {
-                currentBalance = parseFloat(userData.balance || 0);
-                document.getElementById('user-balance').innerText = currentBalance.toFixed(2);
-            }
-        });
-    }
-
     let currentLang = 'am';
 
-    function showMsg(txt, color) {
-        const d = document.getElementById('msg-display');
-        d.innerText = txt; 
-        d.style.color = color;
-        setTimeout(() => d.innerText = "", 5000);
+    if (!userPhone) { window.location.replace("index.html"); }
+
+    // Real-time Balance Fetch
+    database.ref('users/' + userPhone).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            currentBalance = data.balance || 0;
+            document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
+        }
+    });
+
+    function showMsg(text, color) {
+        const msgBox = document.getElementById('msg-box');
+        msgBox.innerText = text;
+        msgBox.style.color = color;
+        setTimeout(() => { msgBox.innerText = ""; }, 4000);
     }
 
     function handleWithdraw() {
-        const amountStr = document.getElementById('am-input').value.trim();
-        const amount = parseInt(amountStr);
-        
-        if (isNaN(amount) || amount <= 0) {
-            showMsg(currentLang === 'am' ? "እባክዎ ትክክለኛ መጠን ያስገቡ!" : "ENTER VALID AMOUNT!", "#d00000");
+        const amountInput = document.getElementById('withdraw-amount');
+        const amount = parseInt(amountInput.value);
+
+        if (!amount || amount <= 0) {
+            showMsg(currentLang === 'am' ? "እባክዎ ትክክለኛ መጠን ያስገቡ" : "ENTER VALID AMOUNT", "red");
             return;
         }
 
         if (amount > currentBalance) {
-            showMsg(currentLang === 'am' ? "በቂ ቀሪ ሂሳብ የለዎትም!" : "INSUFFICIENT BALANCE!", "#d00000");
+            showMsg(currentLang === 'am' ? "በቂ ቀሪ ሂሳብ የለዎትም" : "INSUFFICIENT BALANCE", "red");
             return;
         }
 
-        if (amount % 10 === 0) {
-            database.ref('withdraw_requests').push({ 
-                phone: userPhone, 
-                amount: amount, 
-                status: "pending", 
-                time: new Date().toLocaleString() 
-            })
-            .then(() => { 
-                showMsg(currentLang === 'am' ? "ጥያቄው ለአድሚን ተልኳል!" : "SENT TO ADMIN!", "#2e7d32"); 
-                document.getElementById('am-input').value = ""; 
-            });
-        } else { 
-            showMsg(currentLang === 'am' ? "የ10 እጥፍ መጠን ያስገቡ (10, 20, 50...)" : "ENTER MULTIPLES OF 10!", "#d00000"); 
+        if (amount % 10 !== 0) {
+            showMsg(currentLang === 'am' ? "የ10 እጥፍ መጠን ያስገቡ (10, 20...)" : "USE MULTIPLES OF 10", "red");
+            return;
         }
+
+        // Deduct balance and send request
+        const newBalance = currentBalance - amount;
+        database.ref('users/' + userPhone).update({ balance: newBalance }).then(() => {
+            database.ref('withdraw_requests').push({
+                phone: userPhone,
+                amount: amount,
+                status: "pending",
+                time: new Date().toLocaleString()
+            }).then(() => {
+                showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ይላክልዎታል" : "REQUEST SENT! SUCCESS", "#2e7d32");
+                amountInput.value = "";
+            });
+        });
     }
 
     function setLang(l) {
@@ -217,8 +161,7 @@
         document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
         document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
         document.getElementById('txt-instr').innerText = isEn ? "Enter the amount you want to withdraw below." : "ማውጣት የሚፈልጉትን የገንዘብ መጠን ከታች ያስገቡ።";
-        document.getElementById('bottom-notice').innerText = isEn ? "Withdrawal will be processed via Telebirr within 10 minutes." : "የጠየቁት ገንዘብ በተመዘገቡበት የቴሌብር ቁጥር በ 10 ደቂቃ ውስጥ ይላካል።";
-
+        document.getElementById('bottom-notice').innerText = isEn ? "Withdrawal will be processed within 10 minutes." : "የጠየቁት ገንዘብ በ 10 ደቂቃ ውስጥ አካውንትዎ ላይ ገቢ ይሆናል።";
         document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
         document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
     }
