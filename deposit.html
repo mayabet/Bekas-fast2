@@ -6,6 +6,7 @@
     <title>Mita Betting - Deposit</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -90,7 +91,7 @@
 </div>
 
 <script>
-    // --- አዲሱ Firebase ኮንፊግሬሽን ---
+    // --- አዲሱ Firebase Configuration ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -101,18 +102,25 @@
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const database = firebase.database();
-    const userPhone = localStorage.getItem('userPhone');
+    
+    // User identifier from local storage
+    const userPhone = localStorage.getItem('userPhone') || "Guest";
 
-    if (userPhone) {
+    // Update real-time balance
+    if (userPhone !== "Guest") {
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const userData = snapshot.val();
-            if (userData) document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+            if (userData) {
+                document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+            }
         });
     }
 
-    // --- የተቀሩት ተግባራት (UI & Handling) ---
     const trInput = document.getElementById('tr-input');
     const amInput = document.getElementById('am-input');
 
@@ -132,10 +140,12 @@
 
     function showMsg(txt, color) {
         const d = document.getElementById('msg-display');
-        d.innerText = txt; d.style.color = color;
+        d.innerText = txt; 
+        d.style.color = color;
         setTimeout(() => d.innerText = "", 5000);
     }
 
+    // Submit deposit request
     function handleDeposit() {
         const code = trInput.value.trim();
         const amount = parseInt(amInput.value.trim());
@@ -149,11 +159,19 @@
             return;
         }
 
+        // Push data to 'deposit_requests' node
         database.ref('deposit_requests').push({ 
-            phone: userPhone || "Unknown", transactionCode: code, amount: amount, status: "pending", time: new Date().toLocaleString() 
+            phone: userPhone, 
+            transactionCode: code, 
+            amount: amount, 
+            status: "pending", 
+            time: new Date().toLocaleString() 
         }).then(() => {
-            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል!" : "SUCCESS!", "#2e7d32");
-            trInput.value = ""; amInput.value = "";
+            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በቅርቡ ይረጋገጣል።" : "SUCCESS! REQUEST SENT.", "#2e7d32");
+            trInput.value = ""; 
+            amInput.value = "";
+        }).catch((error) => {
+            showMsg("Error: " + error.message, "#d00000");
         });
     }
 
