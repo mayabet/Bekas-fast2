@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BUNAMAW FAST - FULL ADMIN</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <style>
+        html, body { width: 100%; margin: 0; padding: 0; background: #f4f4f4; font-family: sans-serif; }
+        .header { background: #8B4513; color: white; padding: 15px; text-align: center; font-weight: 900; border-bottom: 4px solid #000; position: sticky; top: 0; z-index: 1000; }
+        .section { background: white; margin-bottom: 10px; border-bottom: 2px solid #002d4b; }
+        .section-title { background: #002d4b; color: white; padding: 10px; font-size: 13px; font-weight: 900; text-transform: uppercase; text-align: center; }
+        .card { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .card-info { font-size: 12px; font-weight: 700; color: #333; }
+        .btn-group { display: flex; gap: 5px; }
+        button { padding: 8px 10px; border: none; border-radius: 4px; font-weight: 900; font-size: 11px; cursor: pointer; color: white; }
+        .btn-approve { background: #2e7d32; }
+        .btn-reject { background: #c62828; }
+        .btn-reset { background: #ff8c00; }
+        .btn-del { background: #000; }
+        .num-input { width: 50px; padding: 6px; font-weight: 900; border: 2px solid #002d4b; text-align: center; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px; }
+        .stat-box { background: #002d4b; color: white; padding: 10px; text-align: center; border-radius: 5px; }
+        .stat-val { font-size: 18px; font-weight: 900; color: #ff8c00; }
+        #history-list, #user-list { max-height: 250px; overflow-y: auto; padding: 10px; font-size: 11px; }
+        .btn-clear { background: red; width: calc(100% - 20px); margin: 10px; padding: 15px; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+<div class="header">BUNAMAW FAST - FULL CONTROL</div>
+
+<div class="section">
+    <div class="section-title">Live Game Stats</div>
+    <div class="stat-grid">
+        <div class="stat-box">Play 1 (50)<br><span id="s-play1" class="stat-val">0</span></div>
+        <div class="stat-box">Play 2 (100)<br><span id="s-play2" class="stat-val">0</span></div>
+        <div class="stat-box">Play 3 (200)<br><span id="s-play3" class="stat-val">0</span></div>
+        <div class="stat-box">Users<br><span id="s-users" class="stat-val">0</span></div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">Deposit Requests (Telebirr)</div>
+    <div id="deposit-list"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">Withdraw Requests</div>
+    <div id="withdraw-list"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">Password Reset Requests</div>
+    <div id="pass-requests"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">Game Results Control</div>
+    <div class="card">
+        <strong>PLAY 1:</strong>
+        <input type="number" id="res-play1" class="num-input" placeholder="Win">
+        <div class="btn-group">
+            <button class="btn-approve" onclick="setRes('play1')">Set</button>
+            <button class="btn-reset" onclick="resetGame('play1')">Reset</button>
+        </div>
+    </div>
+    <div class="card">
+        <strong>PLAY 2:</strong>
+        <input type="number" id="res-play2" class="num-input" placeholder="Win">
+        <div class="btn-group">
+            <button class="btn-approve" onclick="setRes('play2')">Set</button>
+            <button class="btn-reset" onclick="resetGame('play2')">Reset</button>
+        </div>
+    </div>
+    <div class="card">
+        <strong>PLAY 3:</strong>
+        <input type="number" id="res-play3" class="num-input" placeholder="Win">
+        <div class="btn-group">
+            <button class="btn-approve" onclick="setRes('play3')">Set</button>
+            <button class="btn-reset" onclick="resetGame('play3')">Reset</button>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">User Management</div>
+    <div id="user-list"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">Transaction History</div>
+    <div id="history-list"></div>
+</div>
+
+<button class="btn-clear" onclick="clearAllData()">CLEAR ALL DATA (EXCEPT USERS)</button>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
+        authDomain: "bekas-fast2.firebaseapp.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        projectId: "bekas-fast2",
+        storageBucket: "bekas-fast2.firebasestorage.app",
+        messagingSenderId: "267970590270",
+        appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // -- 1. Deposits --
+    database.ref('deposit_requests').on('value', snap => {
+        const list = document.getElementById('deposit-list'); list.innerHTML = "";
+        snap.forEach(c => {
+            const d = c.val();
+            list.innerHTML += `<div class="card">
+                <div class="card-info">Ph: ${d.phone}<br>Amt: ${d.amount}<br>Code: ${d.transactionCode}</div>
+                <div class="btn-group">
+                    <button class="btn-approve" onclick="approveDep('${c.key}', '${d.phone}', ${d.amount})">✓</button>
+                    <button class="btn-reject" onclick="rem('deposit_requests', '${c.key}')">X</button>
+                </div>
+            </div>`;
+        });
+    });
+
+    function approveDep(key, ph, amt) {
+        database.ref('users/' + ph + '/balance').transaction(c => (c || 0) + amt)
+        .then(() => { log(ph, "Deposit", amt); rem('deposit_requests', key); });
+    }
+
+    // -- 2. Withdrawals --
+    database.ref('withdraw_requests').on('value', snap => {
+        const list = document.getElementById('withdraw-list'); list.innerHTML = "";
+        snap.forEach(c => {
+            const w = c.val();
+            list.innerHTML += `<div class="card">
+                <div class="card-info">Ph: ${w.phone}<br>Amt: ${w.amount}</div>
+                <div class="btn-group">
+                    <button class="btn-approve" onclick="rem('withdraw_requests', '${c.key}')">Paid</button>
+                    <button class="btn-reject" onclick="refund('${c.key}', '${w.phone}', ${w.amount})">Refund</button>
+                </div>
+            </div>`;
+        });
+    });
+
+    function refund(key, ph, amt) {
+        database.ref('users/' + ph + '/balance').transaction(c => (c || 0) + amt).then(() => rem('withdraw_requests', key));
+    }
+
+    // -- 3. Passwords --
+    database.ref('password_requests').on('value', snap => {
+        const list = document.getElementById('pass-requests'); list.innerHTML = "";
+        snap.forEach(c => {
+            list.innerHTML += `<div class="card"><div class="card-info">Reset: ${c.val().phone}</div>
+            <button class="btn-reject" onclick="rem('password_requests', '${c.key}')">Done</button></div>`;
+        });
+    });
+
+    // -- 4. Game Control --
+    function setRes(game) {
+        const val = document.getElementById('res-' + game).value;
+        if(val) database.ref('games/' + game + '/liveResult').set(val);
+    }
+    function resetGame(game) {
+        if(confirm("Reset " + game + "?")) database.ref('games/' + game).set({ selections: {}, liveResult: "?" });
+    }
+
+    // -- 5. User List --
+    database.ref('users').on('value', snap => {
+        document.getElementById('s-users').innerText = snap.numChildren();
+        const list = document.getElementById('user-list'); list.innerHTML = "";
+        snap.forEach(c => {
+            const u = c.val();
+            list.innerHTML += `<div class="card"><div class="card-info">${u.username} (${u.phone})<br>Bal: ${u.balance}</div>
+            <button class="btn-del" onclick="delUser('${c.key}')">Del</button></div>`;
+        });
+    });
+
+    function delUser(key) { if(confirm("Delete user?")) database.ref('users/' + key).remove(); }
+
+    // -- Helpers --
+    function log(phone, type, amount) {
+        database.ref('transaction_history').push({ phone, type, amount, time: new Date().toLocaleString() });
+    }
+    function rem(path, key) { database.ref(path + '/' + key).remove(); }
+    
+    function clearAllData() {
+        if(confirm("Wipe all history?")) {
+            ['deposit_requests', 'withdraw_requests', 'transaction_history', 'games', 'password_requests'].forEach(p => database.ref(p).remove());
+        }
+    }
+
+    // Stats
+    ['play1', 'play2', 'play3'].forEach(g => {
+        database.ref('games/' + g + '/selections').on('value', snap => {
+            document.getElementById('s-' + g).innerText = snap.numChildren();
+        });
+    });
+
+    database.ref('transaction_history').limitToLast(15).on('value', snap => {
+        const list = document.getElementById('history-list'); list.innerHTML = "";
+        snap.forEach(c => {
+            const h = c.val();
+            list.innerHTML += `<div style="padding:4px; border-bottom:1px solid #ddd;">[${h.time}] ${h.phone}: ${h.type} ${h.amount}</div>`;
+        });
+    });
+</script>
+</body>
+</html>
