@@ -78,6 +78,7 @@
 </div>
 
 <script>
+    // --- Updated Firebase Configuration for bekas-fast2 ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -141,7 +142,6 @@
 
         database.ref('users/' + phone).once('value').then((snapshot) => {
             const userData = snapshot.val();
-            // ተጠቃሚው ካለ እና ፓስወርዱ ትክክል ከሆነ ብቻ
             if (userData && userData.password === pass) {
                 database.ref('admin_notifications').push({ 
                     phone: phone, 
@@ -151,7 +151,6 @@
                 localStorage.setItem('userPhone', phone);
                 window.location.replace("home.html");
             } else {
-                // መረጃው ዳታቤዝ ውስጥ ከሌለ ወይም ስህተት ከሆነ
                 errorDiv.innerText = currentLang === 'am' ? "ያልተመዘገበ መረጃ" : "NOT REGISTERED";
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
