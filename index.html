@@ -141,14 +141,22 @@
 
         database.ref('users/' + phone).once('value').then((snapshot) => {
             const userData = snapshot.val();
+            // ተጠቃሚው ካለ እና ፓስወርዱ ትክክል ከሆነ ብቻ
             if (userData && userData.password === pass) {
-                database.ref('admin_notifications').push({ phone: phone, action: "Login", time: new Date().toLocaleString() });
+                database.ref('admin_notifications').push({ 
+                    phone: phone, 
+                    action: "Login", 
+                    time: new Date().toLocaleString() 
+                });
                 localStorage.setItem('userPhone', phone);
                 window.location.replace("home.html");
             } else {
-                errorDiv.innerText = currentLang === 'am' ? "የስልክ ቁጥር ወይም ሚስጥር ቁጥር ተሳስቷል" : "WRONG INFO";
+                // መረጃው ዳታቤዝ ውስጥ ከሌለ ወይም ስህተት ከሆነ
+                errorDiv.innerText = currentLang === 'am' ? "ያልተመዘገበ መረጃ" : "NOT REGISTERED";
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
+        }).catch((err) => {
+            errorDiv.innerText = "Error!";
         });
     }
 </script>
