@@ -13,13 +13,19 @@
     <style>
         body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .en-mode { font-family: 'Poppins', sans-serif !important; }
-        .app-card { width: 92%; max-width: 360px; background: #fff; border-radius: 15px; border: 1px solid #ddd; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* የውጪው ቦርደር እዚህ ጋር 3px ተደርጓል */
+        .app-card { width: 92%; max-width: 360px; background: #fff; border-radius: 15px; border: 3px solid #002d4b; overflow: hidden; display: flex; flex-direction: column; }
+        
         .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
         .title-txt { font-weight: 900; font-size: 18px; }
         .plus18 { color: #ff8c00; font-size: 20px; font-weight: 900; }
         .header-line { height: 3px; background: #ff8c00; width: 100%; }
         .content { padding: 15px; }
-        .user-card { background: #f9f9f9; border: 1.5px solid #002d4b; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* የሰላም/ባላንስ ሳጥን ቦርደር እዚህ ጋር 3px ተደርጓል */
+        .user-card { background: #f9f9f9; border: 3px solid #002d4b; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        
         .greet { color: #002d4b; font-weight: 800; font-size: 15px; }
         .bal { font-weight: 900; font-size: 19px; color: #ff8c00; }
         .q-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
@@ -48,7 +54,7 @@
 
 <div class="app-card">
     <div class="yellow-bar">
-        <span class="title-txt" id="title-name">ቡና</span>
+        <span class="title-txt" id="title-name">ቡናማው</span>
         <span class="plus18">18+</span>
     </div>
     <div class="header-line"></div>
@@ -136,14 +142,12 @@
     if (!userPhone) {
         window.location.replace("index.html");
     } else {
-        // የተጠቃሚውን መረጃ በቀጥታ ከዳታቤዝ ለማንበብ
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const userData = snapshot.val();
             if (userData) {
                 document.getElementById('user-nick').innerText = userData.username || "ተጠቃሚ";
                 document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
             } else {
-                // ተጠቃሚው በዳታቤዝ ውስጥ ከሌለ ወደ ሎጊን ይመለሳል
                 handleLogout();
             }
         });
@@ -152,7 +156,7 @@
     function setLang(l) {
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
-        document.getElementById('title-name').innerText = isEn ? "MITA BETTING" : "ሚታ ቤቲንግ";
+        document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው";
         document.getElementById('txt-hi').innerText = isEn ? "HELLO" : "ሰላም";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
         document.getElementById('btn-dep').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
