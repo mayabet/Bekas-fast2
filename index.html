@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw- Login</title>
+    <title>Mita Betting - Login</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -77,11 +77,11 @@
 </div>
 
 <script>
-    // Firebase Configuration - እነዚህን መረጃዎች በሁለቱም ፋይሎች ላይ ተመሳሳይ ማድረግ አለብህ
+    // Firebase Configuration - አዲሱ የዳታቤዝ አድራሻ እዚህ ተስተካክሏል
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -92,20 +92,35 @@
     const database = firebase.database();
 
     let currentLang = 'am';
+
     function updateClock() {
         const n = new Date();
         const mAM = ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"];
+        const mEN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
         let hours = n.getHours(); 
-        const ampmAM = hours >= 12 ? ' ከሰዓት' : ' ጠዋት';
+        const isAm = (currentLang === 'am');
+        const ampm = hours >= 12 ? (isAm ? ' ከሰዓት' : ' PM') : (isAm ? ' ጠዋት' : ' AM');
+        
         hours = hours % 12 || 12;
-        document.getElementById('date-label').innerText = "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
-        document.getElementById('time-label').innerText = "ሰዓት: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
+        
+        const dateStr = isAm ? 
+            "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear() : 
+            "DATE: " + mEN[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
+            
+        const timeStr = isAm ? 
+            "ሰዓት: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampm :
+            "TIME: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampm;
+
+        document.getElementById('date-label').innerText = dateStr;
+        document.getElementById('time-label').innerText = timeStr;
     }
     setInterval(updateClock, 1000);
 
     function setLang(l) {
         currentLang = l;
         const isAm = (l === 'am');
+        document.body.className = isAm ? '' : 'en-mode';
         document.getElementById('l-btn').innerText = isAm ? "ግባ" : "LOG IN";
         document.getElementById('r-btn').innerText = isAm ? "ተመዝገብ" : "REGISTER";
         document.getElementById('l-text').innerText = isAm ? "ቋንቋ" : "LANGUAGE";
@@ -114,6 +129,7 @@
         document.getElementById('motto').innerText = isAm ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
         document.getElementById('lang-am').className = isAm ? 'lang-btn active' : 'lang-btn';
         document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
+        updateClock();
     }
 
     function handleLogin() {
@@ -126,6 +142,7 @@
             return;
         }
 
+        // ዳታቤዙን ቼክ ማድረግ
         database.ref('users/' + phone).once('value').then((snapshot) => {
             const userData = snapshot.val();
             if (userData && userData.password === pass) {
@@ -136,7 +153,8 @@
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
         }).catch((err) => { 
-            errorDiv.innerText = "Network Error!"; 
+            console.error(err);
+            errorDiv.innerText = "Network Error! Check Connection"; 
         });
     }
 </script>
