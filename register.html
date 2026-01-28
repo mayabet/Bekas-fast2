@@ -7,19 +7,23 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         body { background: #eef2f7; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #cfe0eb; }
         .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
         .header-line { height: 3px; background: #ff8c00; width: 100%; }
         .content { padding: 20px; }
+        .branding h1 { color: #002d4b; text-align: center; margin: 10px 0; font-size: 32px; font-weight: 900; }
+        .motto { text-align: center; color: #ff8c00; font-size: 14px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
         .input-row { margin-bottom: 15px; }
-        .input-box { border: 2px solid #002d4b; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; }
-        input { border: none; outline: none; width: 100%; font-size: 16px; margin-left: 10px; }
-        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; font-size: 16px; }
+        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; background: #fff; }
+        .input-box i { color: #002d4b; margin-right: 12px; width: 20px; text-align: center; }
+        input { border: none; outline: none; width: 100%; font-size: 16px; font-weight: 600; }
+        #error-msg { color: #d00000; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 10px; min-height: 18px; }
+        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 16px; text-transform: uppercase; }
         .register-btn { background: #ff8c00; color: white; }
         .back-btn { background: #002d4b; color: white; }
-        #error-msg { color: #d00000; text-align: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -27,17 +31,19 @@
 <div class="card">
     <div class="yellow-bar">
         <span>አዲስ አካውንት</span>
-        <span style="color:#ff8c00; font-weight: 900;">18+</span>
+        <span style="color:#ff8c00; font-size:22px; font-weight: 900;">18+</span>
     </div>
     <div class="header-line"></div>
+    
     <div class="content">
-        <h2 style="text-align:center; color:#002d4b; margin-top:0;">ሚታ ቤቲንግ</h2>
+        <div class="branding"><h1>ሚታ ቤቲንግ</h1></div>
+        <div class="motto">በኃላፊነት ይጫወቱ!</div>
         <div id="error-msg"></div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-user"></i>
-                <input type="text" id="name-input" placeholder="ስም">
+                <input type="text" id="name-input" placeholder="ስም" maxlength="15">
             </div>
         </div>
 
@@ -56,11 +62,12 @@
         </div>
 
         <button class="btn register-btn" onclick="handleRegister()">አካውንት ክፈት</button>
-        <button class="btn back-btn" onclick="window.location.href='index.html'">ተመለስ</button>
+        <button class="btn back-btn" onclick="window.location.replace('index.html')">ተመለስ</button>
     </div>
 </div>
 
 <script>
+    // ትክክለኛው የ bekas-fast2 ዳታቤዝ ኮንፊገሬሽን
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -71,49 +78,65 @@
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    // Firebase ማስጀመር
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const database = firebase.database();
+
+    function showError(msg, color = "#d00000") {
+        const errorDiv = document.getElementById('error-msg');
+        errorDiv.style.color = color;
+        errorDiv.innerText = msg;
+    }
 
     function handleRegister() {
         const name = document.getElementById('name-input').value.trim();
         const phone = document.getElementById('p-input').value.trim();
         const pass = document.getElementById('pass-input').value.trim();
-        const errorDiv = document.getElementById('error-msg');
-
-        if (!name || !phone || !pass) {
-            errorDiv.innerText = "እባክዎ ሁሉንም ቦታ ይሙሉ";
-            return;
+        
+        // 1. መረጃ መሞላቱን ማረጋገጥ
+        if (!name || !phone || !pass) { 
+            showError("እባክዎ ሁሉንም መረጃ በትክክል ይሙሉ!"); 
+            return; 
+        }
+        
+        // 2. የስልክ ቁጥር ህግ (09 መጀመር እና 10 ቁጥር መሆን)
+        if (phone.length !== 10 || !phone.startsWith('09')) { 
+            showError("ስልክ ቁጥር በ 09 መጀመር አለበት (10 አሃዝ)"); 
+            return; 
+        }
+        
+        // 3. የፒን ህግ (5 ቁጥር መሆን)
+        if (pass.length !== 5) { 
+            showError("ፒን 5 ቁጥር መሆን አለበት!"); 
+            return; 
         }
 
-        if (phone.length !== 10 || !phone.startsWith('09')) {
-            errorDiv.innerText = "ትክክለኛ ስልክ ያስገቡ (09...)";
-            return;
-        }
+        showError("በመመዝገብ ላይ...", "#002d4b");
 
-        errorDiv.style.color = "blue";
-        errorDiv.innerText = "በመመዝገብ ላይ...";
-
-        // ስልኩ መኖሩን ማረጋገጥ
+        // 4. ዳታቤዝ ላይ ስልኩ መኖሩን ማረጋገጥ
         database.ref('users/' + phone).once('value').then((snapshot) => {
             if (snapshot.exists()) {
-                errorDiv.style.color = "red";
-                errorDiv.innerText = "ይህ ስልክ ቁጥር ተመዝግቧል!";
+                showError("ይህ ስልክ ቁጥር ተመዝግቧል!");
             } else {
-                // መመዝገብ
+                // 5. አዲስ ተጠቃሚ መመዝገብ
                 database.ref('users/' + phone).set({
                     username: name,
                     password: pass,
                     balance: 0,
                     status: "active",
-                    joinedDate: new Date().toLocaleString()
+                    joinedDate: new Date().toISOString()
                 }).then(() => {
                     localStorage.setItem('userPhone', phone);
-                    window.location.href = "home.html";
-                }).catch((err) => {
-                    errorDiv.style.color = "red";
-                    errorDiv.innerText = "ስህተት: " + err.message;
+                    window.location.replace("home.html");
+                }).catch((error) => {
+                    showError("ስህተት ተፈጥሯል፦ " + error.message);
                 });
             }
+        }).catch((err) => {
+            showError("የዳታቤዝ ግንኙነት ተቋርጧል!");
+            console.error(err);
         });
     }
 </script>
