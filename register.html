@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Register</title>
+    <title>Mita Betting - Register</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -80,6 +80,7 @@
 </div>
 
 <script>
+    // Firebase Configuration - ለ bekas-fast2 ዳታቤዝ የተስተካከለ
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -98,7 +99,7 @@
     function showError(msg) {
         const errorDiv = document.getElementById('error-msg');
         errorDiv.innerText = msg;
-        setTimeout(() => { errorDiv.innerText = ""; }, 2000);
+        setTimeout(() => { errorDiv.innerText = ""; }, 3000);
     }
 
     let currentLang = 'am';
@@ -121,8 +122,14 @@
             return; 
         }
 
+        // በመመዝገብ ላይ... የሚል መልዕክት ለማሳየት
+        const errorDiv = document.getElementById('error-msg');
+        errorDiv.style.color = "#002d4b";
+        errorDiv.innerText = currentLang === 'am' ? "በመመዝገብ ላይ..." : "REGISTERING...";
+
         database.ref('users/' + phone).once('value', (snapshot) => {
             if (snapshot.exists()) {
+                errorDiv.style.color = "#d00000";
                 showError(currentLang === 'am' ? "ይህ ስልክ ቁጥር ተመዝግቧል!" : "PHONE ALREADY REGISTERED!");
             } else {
                 database.ref('users/' + phone).set({
@@ -135,6 +142,7 @@
                     localStorage.setItem('userPhone', phone);
                     window.location.replace("home.html");
                 }).catch((error) => {
+                    errorDiv.style.color = "#d00000";
                     showError("Error: " + error.message);
                 });
             }
@@ -145,7 +153,7 @@
         currentLang = l;
         const isAm = (l === 'am');
         document.body.classList.toggle('en-mode', !isAm);
-        document.getElementById('brand-name').innerText = isAm ? "ሚታ ቤቲንግ" : "MITA BETTING";
+        document.getElementById('brand-name').innerText = isAm ? "ቡናማው" : "MITA BETTING";
         document.getElementById('reg-title').innerText = isAm ? "አዲስ አካውንት" : "NEW ACCOUNT";
         document.getElementById('play-resp').innerText = isAm ? "በኃላፊነት ይጫወቱ!" : "PLAY RESPONSIBLY!";
         document.getElementById('reg-btn-text').innerText = isAm ? "አካውንት ክፈት" : "CREATE ACCOUNT";
