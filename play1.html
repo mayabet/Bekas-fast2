@@ -90,6 +90,7 @@
 </div>
 
 <script>
+    // በአዲሱ Bekas Fast2 መረጃ ተተክቷል
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -112,7 +113,11 @@
     else {
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) { userName = data.username; balance = parseFloat(data.balance || 0); document.getElementById('cash').innerText = balance.toFixed(2); }
+            if (data) { 
+                userName = data.username; 
+                balance = parseFloat(data.balance || 0); 
+                document.getElementById('cash').innerText = balance.toFixed(2); 
+            }
         });
     }
 
@@ -145,6 +150,7 @@
         if(isPlaying || isResetting) return;
         if (selections[n]) return;
         if (balance < 50) { document.getElementById('msg-box').innerText = trans[currentLang].low; return; }
+        
         database.ref('users/' + userPhone).update({ balance: balance - 50 });
         gameRef.child(n).set(userName).then(() => {
             gameRef.once('value', (snap) => {
@@ -210,6 +216,7 @@
             if (occupant === userName) cell.className = "num-cell user-selected";
             else if (occupant !== "") cell.className = "num-cell taken-cell";
             else cell.className = "num-cell";
+            
             if (occupant !== "") {
                 table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occupant}</td></tr>`;
                 count++;
