@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Login</title>
+    <title>Mita Betting - Login</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -77,6 +77,7 @@
 </div>
 
 <script>
+    // Firebase Configuration - እነዚህን መረጃዎች በሁለቱም ፋይሎች ላይ ተመሳሳይ ማድረግ አለብህ
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -102,13 +103,26 @@
     }
     setInterval(updateClock, 1000);
 
+    function setLang(l) {
+        currentLang = l;
+        const isAm = (l === 'am');
+        document.getElementById('l-btn').innerText = isAm ? "ግባ" : "LOG IN";
+        document.getElementById('r-btn').innerText = isAm ? "ተመዝገብ" : "REGISTER";
+        document.getElementById('l-text').innerText = isAm ? "ቋንቋ" : "LANGUAGE";
+        document.getElementById('pass-input').placeholder = isAm ? "ሚስጥር ቁጥር" : "PIN";
+        document.getElementById('lost-btn').innerText = isAm ? "ጠፋብኝ" : "LOST";
+        document.getElementById('motto').innerText = isAm ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
+        document.getElementById('lang-am').className = isAm ? 'lang-btn active' : 'lang-btn';
+        document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
+    }
+
     function handleLogin() {
         const phone = document.getElementById('p-input').value.trim();
         const pass = document.getElementById('pass-input').value.trim();
         const errorDiv = document.getElementById('error-msg');
 
         if (!phone || !pass) {
-            errorDiv.innerText = "እባክዎ መረጃውን በትክክል ያስገቡ";
+            errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFO";
             return;
         }
 
@@ -118,10 +132,12 @@
                 localStorage.setItem('userPhone', phone);
                 window.location.replace("home.html");
             } else {
-                errorDiv.innerText = "ያልተመዘገበ መረጃ";
+                errorDiv.innerText = currentLang === 'am' ? "ያልተመዘገበ መረጃ ወይም የተሳሳተ ፒን" : "NOT REGISTERED OR WRONG PIN";
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
-        }).catch((err) => { errorDiv.innerText = "Network Error!"; });
+        }).catch((err) => { 
+            errorDiv.innerText = "Network Error!"; 
+        });
     }
 </script>
 </body>
