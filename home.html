@@ -48,14 +48,14 @@
 
 <div class="app-card">
     <div class="yellow-bar">
-        <span class="title-txt" id="title-name">ቡናማው ፈጣን</span>
+        <span class="title-txt" id="title-name">ሚታ ቤቲንግ</span>
         <span class="plus18">18+</span>
     </div>
     <div class="header-line"></div>
 
     <div class="content">
         <div class="user-card">
-            <div class="greet"><span id="txt-hi">ሰላም</span>, <span id="user-nick">ተጠቃሚ</span></div>
+            <div class="greet"><span id="txt-hi">ሰላም</span>, <span id="user-nick">...</span></div>
             <div class="bal"><span id="user-balance">0.00</span> <small id="txt-curr">ብር</small></div>
         </div>
 
@@ -118,7 +118,6 @@
 </div>
 
 <script>
-    // --- Updated Firebase Config for bekas-fast2 ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -134,16 +133,18 @@
 
     const userPhone = localStorage.getItem('userPhone');
     
-    // Redirect to login if not logged in
     if (!userPhone) {
         window.location.replace("index.html");
     } else {
-        // Listen for user data changes
+        // የተጠቃሚውን መረጃ በቀጥታ ከዳታቤዝ ለማንበብ
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const userData = snapshot.val();
             if (userData) {
                 document.getElementById('user-nick').innerText = userData.username || "ተጠቃሚ";
-                document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toFixed(2);
+                document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+            } else {
+                // ተጠቃሚው በዳታቤዝ ውስጥ ከሌለ ወደ ሎጊን ይመለሳል
+                handleLogout();
             }
         });
     }
@@ -151,7 +152,7 @@
     function setLang(l) {
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
-        document.getElementById('title-name').innerText = isEn ? "MITA FAST" : "ቡናማው ፈጣን";
+        document.getElementById('title-name').innerText = isEn ? "MITA BETTING" : "ሚታ ቤቲንግ";
         document.getElementById('txt-hi').innerText = isEn ? "HELLO" : "ሰላም";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
         document.getElementById('btn-dep').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
