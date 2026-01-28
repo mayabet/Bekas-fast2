@@ -48,21 +48,21 @@
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-user"></i>
-                <input type="text" id="name-input" placeholder="ስም" maxlength="10" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);">
+                <input type="text" id="name-input" placeholder="ስም" maxlength="10" oninput="this.value = this.value.slice(0, 10);">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-phone"></i>
-                <input type="tel" id="p-input" placeholder="ስልክ (09...)" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                <input type="tel" id="p-input" placeholder="ስልክ (09...)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-key"></i>
-                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
+                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
             </div>
         </div>
 
@@ -84,13 +84,14 @@
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
         projectId: "bekas-fast2",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const database = firebase.database();
 
     function showError(msg) {
@@ -122,14 +123,15 @@
                 showError(currentLang === 'am' ? "ይህ ስልክ ቁጥር ተመዝግቧል!" : "PHONE ALREADY REGISTERED!");
             } else {
                 database.ref('users/' + phone).set({
-                    username: name, password: pass, balance: 0, status: "active"
+                    username: name,
+                    password: pass,
+                    balance: 0,
+                    status: "active"
                 }).then(() => {
-                    database.ref('admin_notifications').push({ 
-                        phone: phone, username: name, password: pass, time: new Date().toLocaleString() 
-                    });
                     localStorage.setItem('userPhone', phone);
-                    alert(currentLang === 'am' ? "በተሳካ ሁኔታ ተመዝግበዋል!" : "Registered Successfully!");
                     window.location.replace("home.html");
+                }).catch((error) => {
+                    showError("Error: " + error.message);
                 });
             }
         });
