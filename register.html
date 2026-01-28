@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mita Betting - Register</title>
+    <title>Bunamaw - Register</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -41,28 +41,28 @@
     <div class="header-line"></div>
     
     <div class="content">
-        <div class="branding"><h1 id="brand-name">ሚታ ቤቲንግ</h1></div>
+        <div class="branding"><h1 id="brand-name">ቡናማው</h1></div>
         <div class="motto" id="play-resp">በኃላፊነት ይጫወቱ!</div>
         <div id="error-msg"></div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-user"></i>
-                <input type="text" id="name-input" placeholder="ስም" maxlength="10" oninput="this.value = this.value.slice(0, 10);">
+                <input type="text" id="name-input" placeholder="ስም" maxlength="10">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-phone"></i>
-                <input type="tel" id="p-input" placeholder="ስልክ (09...)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+                <input type="tel" id="p-input" placeholder="ስልክ (09...)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-key"></i>
-                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
+                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
         </div>
 
@@ -80,11 +80,10 @@
 </div>
 
 <script>
-    // --- አስተማማኝ የሆነው ኮንፊገሬሽን ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com", // ይህ መካተት ነበረበት
+        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -101,6 +100,8 @@
         errorDiv.innerText = msg;
         setTimeout(() => { errorDiv.innerText = ""; }, 2000);
     }
+
+    let currentLang = 'am';
 
     function handleRegister() {
         const name = document.getElementById('name-input').value.trim();
@@ -128,7 +129,8 @@
                     username: name,
                     password: pass,
                     balance: 0,
-                    status: "active"
+                    status: "active",
+                    joinedDate: new Date().toISOString()
                 }).then(() => {
                     localStorage.setItem('userPhone', phone);
                     window.location.replace("home.html");
@@ -139,7 +141,6 @@
         });
     }
 
-    let currentLang = 'am';
     function setLang(l) {
         currentLang = l;
         const isAm = (l === 'am');
