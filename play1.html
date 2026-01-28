@@ -18,8 +18,7 @@
         
         .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
         
-        /* Underline የሌለው መመሪያ */
-        .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; }
+        .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; text-decoration: none !important; }
         
         .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 10px; margin: 0 5px; }
         .num-cell { border: 2.5px solid #002d4b; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; }
@@ -27,29 +26,28 @@
         .user-selected { background: #002d4b !important; color: #fff !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
         
-        /* የውጤት ካርዶች - እኩል መጠን (Size) */
         .stats-area { padding: 10px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
-        .stat-card { flex: 1; background: #fff; border: 3px solid #002d4b; border-radius: 10px; padding: 8px; text-align: center; height: 70px; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label-bold { display: block; font-size: 14px; font-weight: 1000; margin-bottom: 5px; color: #002d4b; }
+        .stat-card { flex: 1; background: #fff; border: 3px solid #002d4b; border-radius: 10px; padding: 4px; text-align: center; height: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .stat-label-bold { display: block; font-size: 14px; font-weight: 1000; margin-bottom: 2px; color: #002d4b; }
         .stat-val-bold { font-size: 24px; font-weight: 1000; }
         
-        /* አነስተኛ መልዕክት ሳጥን */
         .msg-box { background: #fff8e1; border: 2px solid #ff8c00; border-left: 8px solid #ff8c00; padding: 8px; text-align: center; font-weight: 1000; font-size: 15px; color: #002d4b; border-radius: 6px; margin-bottom: 10px; }
 
-        /* ዝርዝር - 5 ሰው ብቻ (Scroll) */
         .list-container { margin: 10px; border: 3px solid #002d4b; border-radius: 10px; overflow: hidden; }
         .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; font-size: 16px; }
-        .scroll-area { height: 210px; overflow-y: auto; background: #fff; } /* 5 x 42px = 210px */
+        .scroll-area { height: 210px; overflow-y: auto; background: #fff; } 
         .selected-list td { border-bottom: 1.5px solid #eee; height: 42px; padding: 0 12px; font-weight: 1000; font-size: 15px; color: #000; }
         .id-col { width: 55px; border-right: 3px solid #002d4b; text-align: center; background: #f1f1f1; font-weight: 1000; color: #002d4b; }
 
         .footer { padding: 15px; }
         .btn-back { display: block; padding: 15px; text-align: center; color: white; font-weight: 1000; text-decoration: none; border-radius: 10px; background: #6c757d; font-size: 18px; }
 
-        .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; }
-        .lang-link { cursor: pointer; color: #002d4b; padding: 5px; }
-        .lang-link.active { color: #ff8c00; text-decoration: underline; }
+        /* የቋንቋ መለወጫ - የተስተካከለ */
+        .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
+        .lang-link { cursor: pointer; color: #002d4b; padding: 5px; text-decoration: none !important; }
+        .lang-link.active { color: #ff8c00; text-decoration: none !important; }
+        .lang-label { color: #002d4b; }
     </style>
 </head>
 <body>
@@ -95,10 +93,11 @@
         <a href="home.html" class="btn-back" id="bb">ተመለስ</a>
     </div>
     <div class="lang-bar">
-        <span id="ll">ቋንቋ / LANGUAGE</span>
+        <span id="ll" class="lang-label">ቋንቋ</span>
         <div>
-            <span class="lang-link active" id="l-am" onclick="setLang('am')">አማርኛ</span> | 
-            <span class="lang-link" id="l-en" onclick="setLang('en')">EN</span>
+            <span class="lang-link active" id="l-am" onclick="setLang('am')">አማርኛ</span> 
+            <span style="color: #002d4b;">|</span>
+            <span class="lang-link" id="l-en" onclick="setLang('en')">ENGLISH</span>
         </div>
     </div>
 </div>
