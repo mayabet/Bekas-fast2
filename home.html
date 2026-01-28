@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ቡናማው - Home</title>
+    <title>ቡናማው እጣ - Home</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -21,9 +21,34 @@
         
         .content { padding: 15px; flex-grow: 1; }
 
-        .user-card { background: #f9f9f9; border: 3px solid #002d4b; border-radius: 10px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .greet { color: #002d4b; font-weight: 1000; font-size: 16px; }
-        .bal { font-weight: 1000; font-size: 22px; color: #ff8c00; }
+        /* ጥላ (Shadow) የተጨመረበት የባላንስ ሳጥን */
+        .user-card { 
+            background: #002d4b; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            color: white;
+            display: flex; 
+            flex-direction: column;
+            gap: 12px;
+            /* Shadow effect እዚህ ጋር ተጨምሯል */
+            box-shadow: 0 8px 20px rgba(0, 45, 75, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .greet { font-weight: 600; font-size: 14px; opacity: 0.85; display: flex; align-items: center; gap: 6px; }
+        
+        .bal-row { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 12px;
+        }
+        .bal-label { font-size: 15px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
+        .bal-container { display: flex; align-items: baseline; gap: 4px; }
+        .bal { font-weight: 1000; font-size: 24px; color: #ff8c00; }
+        .curr-label { font-size: 13px; font-weight: 800; opacity: 0.9; }
         
         .q-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .q-btn { padding: 12px; border: none; color: white; font-weight: 1000; border-radius: 10px; text-align: center; text-decoration: none; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -32,18 +57,20 @@
 
         .game-item { border: 2.5px solid #002d4b; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; background: #fff; }
         .p-box { width: 55px; height: 55px; background: #002d4b; color: #fff; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 1000; font-size: 18px; flex-shrink: 0; }
-        .p-box span { font-size: 11px; }
         
         .game-info { flex-grow: 1; margin-left: 12px; }
         .p-bold { color: #002d4b; font-weight: 1000; font-size: 18px; margin-bottom: 4px; display: block; }
-        .win-row { display: flex; gap: 10px; font-size: 13px; font-weight: 800; color: #444; }
-        .win-val { color: #ff8c00; font-weight: 1000; }
+        
+        .win-row { display: flex; gap: 12px; font-size: 14px; color: #333; }
+        .txt-1st, .txt-2nd { font-weight: 1000; font-size: 15px; color: #002d4b; }
+        .win-val { color: #ff8c00; font-weight: 1000; font-size: 16px; }
         
         .play-btn { background: #002d4b; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 1000; font-size: 14px; }
 
-        .footer-area { padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-        .f-link { width: 100%; padding: 14px; border-radius: 10px; border: 2.5px solid #002d4b; font-weight: 1000; cursor: pointer; font-size: 15px; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .l-rule { background: #fff; color: #002d4b; }
+        .footer-area { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .f-link { width: 100%; height: 50px; border-radius: 10px; border: 2.5px solid #002d4b; font-weight: 1000; cursor: pointer; font-size: 15px; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-sizing: border-box; }
+        
+        .l-rule { background: #d1e3f0; color: #002d4b; border-color: #002d4b; }
         .l-out { background: #d00000; color: white; border-color: #a00000; }
 
         .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
@@ -55,14 +82,23 @@
 
 <div class="app-card">
     <div class="yellow-banner">
-        <span class="title-txt" id="title-name">ቡናማው</span>
+        <span class="title-txt" id="title-name">ቡናማው እጣ</span>
         <span class="plus18">18+</span>
     </div>
 
     <div class="content">
         <div class="user-card">
-            <div class="greet"><i class="fas fa-user-alt"></i> <span id="txt-hi">ሰላም</span>, <span id="user-nick">...</span></div>
-            <div class="bal"><span id="user-balance">0.00</span> <small id="txt-curr" style="font-size: 14px;">ብር</small></div>
+            <div class="greet">
+                <i class="fas fa-user-circle"></i> 
+                <span id="txt-hi">ሰላም</span>, <span id="user-nick">...</span>
+            </div>
+            <div class="bal-row">
+                <div class="bal-label" id="txt-bal-lbl">ቀሪ ሂሳብ</div>
+                <div class="bal-container">
+                    <span class="bal" id="user-balance">0.00</span> 
+                    <span class="curr-label" id="txt-curr">ብር</span>
+                </div>
+            </div>
         </div>
 
         <div class="q-actions">
@@ -72,7 +108,7 @@
 
         <div id="games-container">
             <div class="game-item">
-                <div class="p-box">50 <span class="txt-br">ብር</span></div>
+                <div class="p-box">50 <span style="font-size:11px;" class="txt-br">ብር</span></div>
                 <div class="game-info">
                     <span class="p-bold" id="p1-title">30 ሰው</span>
                     <div class="win-row">
@@ -84,7 +120,7 @@
             </div>
 
             <div class="game-item">
-                <div class="p-box">100 <span class="txt-br">ብር</span></div>
+                <div class="p-box">100 <span style="font-size:11px;" class="txt-br">ብር</span></div>
                 <div class="game-info">
                     <span class="p-bold" id="p2-title">30 ሰው</span>
                     <div class="win-row">
@@ -96,7 +132,7 @@
             </div>
 
             <div class="game-item">
-                <div class="p-box">200 <span class="txt-br">ብር</span></div>
+                <div class="p-box">200 <span style="font-size:11px;" class="txt-br">ብር</span></div>
                 <div class="game-info">
                     <span class="p-bold" id="p3-title">30 ሰው</span>
                     <div class="win-row">
@@ -155,8 +191,9 @@
     function setLang(l) {
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
-        document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው";
+        document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው እጣ";
         document.getElementById('txt-hi').innerText = isEn ? "Hello" : "ሰላም";
+        document.getElementById('txt-bal-lbl').innerText = isEn ? "BALANCE" : "ቀሪ ሂሳብ";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
         document.getElementById('btn-dep').querySelector('span').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
         document.getElementById('btn-with').querySelector('span').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
