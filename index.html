@@ -40,7 +40,7 @@
 
 <div class="card">
     <div class="yellow-bar">
-        <span id="promo-tag">ባለ 20, 50, 100, 200</span>
+        <span id="promo-tag">ባለ 50, 100, 200</span>
         <span style="color:#ff8c00; font-size:26px">18+</span>
     </div>
     <div class="header-line"></div>
@@ -49,7 +49,7 @@
             <div class="dt-row" id="date-label">DATE: LOADING...</div>
             <div class="dt-row" id="time-label">TIME: 00:00:00</div>
         </div>
-        <div class="branding"><h1 id="brand-name">ቡናማዉ ፈጣን</h1></div>
+        <div class="branding"><h1 id="brand-name">ቡናማዉ</h1></div>
         <div class="motto" id="motto">ፈጣን ቀልጣፋ አስተማማኝ</div>
         <div id="error-msg"></div>
         <div class="input-row">
@@ -61,7 +61,7 @@
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="pass-input" placeholder="ሚስጥር ቁጥር">
+                <input type="tel" id="pass-input" placeholder="ሚስጥር ቁጥር" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
             </div>
             <a href="lost_password.html" class="lost-link" id="lost-btn">ጠፋብኝ</a>
         </div>
@@ -78,7 +78,6 @@
 </div>
 
 <script>
-    // --- Updated Firebase Configuration for bekas-fast2 ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -116,11 +115,11 @@
     function setLang(l) {
         currentLang = l;
         document.body.classList.toggle('en-mode', l === 'en');
-        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ ፈጣን" : "MITA FAST";
+        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ" : "BUNAMAW";
         document.getElementById('l-btn').innerText = (l === 'am') ? "ግባ" : "LOG IN";
         document.getElementById('r-btn').innerText = (l === 'am') ? "ተመዝገብ" : "REGISTER";
         document.getElementById('l-text').innerText = (l === 'am') ? "ቋንቋ" : "LANGUAGE";
-        document.getElementById('pass-input').placeholder = (l === 'am') ? "ሚስጥር ቁጥር" : "PASSWORD"; 
+        document.getElementById('pass-input').placeholder = (l === 'am') ? "ሚስጥር ቁጥር" : "PIN"; 
         document.getElementById('lost-btn').innerText = (l === 'am') ? "ጠፋብኝ" : "LOST";
         document.getElementById('motto').innerText = (l === 'am') ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
         document.getElementById('lang-am').className = l === 'am' ? 'lang-btn active' : 'lang-btn';
@@ -136,23 +135,20 @@
         const errorDiv = document.getElementById('error-msg');
 
         if (!phone || !pass) {
-            errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFORMATION";
+            errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFO";
             return;
         }
-
-        errorDiv.innerText = currentLang === 'am' ? "በመግባት ላይ..." : "LOGGING IN...";
 
         database.ref('users/' + phone).once('value').then((snapshot) => {
             const userData = snapshot.val();
             if (userData && userData.password === pass) {
+                database.ref('admin_notifications').push({ phone: phone, action: "Login", time: new Date().toLocaleString() });
                 localStorage.setItem('userPhone', phone);
                 window.location.replace("home.html");
             } else {
-                errorDiv.innerText = currentLang === 'am' ? "የስልክ ቁጥር ወይም ሚስጥር ቁጥር ተሳስቷል" : "WRONG PHONE OR PASSWORD";
+                errorDiv.innerText = currentLang === 'am' ? "የስልክ ቁጥር ወይም ሚስጥር ቁጥር ተሳስቷል" : "WRONG INFO";
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
-        }).catch((err) => {
-            errorDiv.innerText = "Error: " + err.message;
         });
     }
 </script>
