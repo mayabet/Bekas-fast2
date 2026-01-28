@@ -21,19 +21,18 @@
         
         .content { padding: 15px; flex-grow: 1; }
 
-        /* ጥላ (Shadow) የተጨመረበት የባላንስ ሳጥን */
+        /* ጥላው ይበልጥ ጎልቶ እንዲታይ ተደርጓል (Stronger Shadow) */
         .user-card { 
             background: #002d4b; 
             border-radius: 12px; 
             padding: 20px; 
-            margin-bottom: 20px; 
+            margin-bottom: 25px; 
             color: white;
             display: flex; 
             flex-direction: column;
             gap: 12px;
-            /* Shadow effect እዚህ ጋር ተጨምሯል */
-            box-shadow: 0 8px 20px rgba(0, 45, 75, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 28px rgba(0, 45, 75, 0.45); /* ይበልጥ የጎላ ጥላ */
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .greet { font-weight: 600; font-size: 14px; opacity: 0.85; display: flex; align-items: center; gap: 6px; }
@@ -42,12 +41,12 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            border-top: 1px solid rgba(255,255,255,0.15);
-            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
         }
         .bal-label { font-size: 15px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
         .bal-container { display: flex; align-items: baseline; gap: 4px; }
-        .bal { font-weight: 1000; font-size: 24px; color: #ff8c00; }
+        .bal { font-weight: 1000; font-size: 26px; color: #ff8c00; }
         .curr-label { font-size: 13px; font-weight: 800; opacity: 0.9; }
         
         .q-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -146,12 +145,12 @@
     </div>
 
     <div class="footer-area">
-        <a href="info.html" class="f-link l-rule" id="btn-rule"><i class="fas fa-info-circle"></i> መረጃ እና መመሪያ</a>
-        <button onclick="handleLogout()" class="f-link l-out" id="id-out"><i class="fas fa-sign-out-alt"></i> ከመለያ ውጣ</button>
+        <a href="info.html" class="f-link l-rule" id="btn-rule"><i class="fas fa-info-circle"></i> <span id="txt-info-btn">መረጃ እና መመሪያ</span></a>
+        <button onclick="handleLogout()" class="f-link l-out" id="id-out"><i class="fas fa-sign-out-alt"></i> <span id="txt-logout-btn">ከመለያ ውጣ</span></button>
     </div>
 
     <div class="lang-bar">
-        <span id="txt-lang">ቋንቋ</span>
+        <span id="txt-lang-lbl">ቋንቋ</span>
         <div>
             <span id="lang-am" class="lang-link active" onclick="setLang('am')">አማርኛ</span> | 
             <span id="lang-en" class="lang-link" onclick="setLang('en')">ENGLISH</span>
@@ -191,16 +190,22 @@
     function setLang(l) {
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
+        
+        // ሁሉም ጽሁፎች በአንድ ላይ ይቀየራሉ
         document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው እጣ";
-        document.getElementById('txt-hi').innerText = isEn ? "Hello" : "ሰላም";
+        document.getElementById('txt-hi').innerText = isEn ? "HELLO" : "ሰላም";
         document.getElementById('txt-bal-lbl').innerText = isEn ? "BALANCE" : "ቀሪ ሂሳብ";
-        document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
+        document.getElementById('txt-curr').innerText = isEn ? "BIRR" : "ብር";
         document.getElementById('btn-dep').querySelector('span').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
         document.getElementById('btn-with').querySelector('span').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
         
         document.getElementById('p1-title').innerText = isEn ? "30 People" : "30 ሰው";
         document.getElementById('p2-title').innerText = isEn ? "30 People" : "30 ሰው";
         document.getElementById('p3-title').innerText = isEn ? "30 People" : "30 ሰው";
+
+        document.getElementById('txt-info-btn').innerText = isEn ? "INFO & RULES" : "መረጃ እና መመሪያ";
+        document.getElementById('txt-logout-btn').innerText = isEn ? "LOGOUT" : "ከመለያ ውጣ";
+        document.getElementById('txt-lang-lbl').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
 
         document.querySelectorAll('.btn-go').forEach(el => el.innerText = isEn ? "PLAY" : "ተጫወት");
         document.querySelectorAll('.txt-br').forEach(el => el.innerText = isEn ? "BIRR" : "ብር");
