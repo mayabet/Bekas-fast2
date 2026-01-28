@@ -3,27 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Register</title>
+    <title>ቡናማው እጣ - Register</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #eef2f7; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow: hidden; }
-        .card { width: 92%; max-width: 360px; background: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #cfe0eb; }
-        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
-        .header-line { height: 3px; background: #ff8c00; width: 100%; }
-        .content { padding: 20px; }
-        .branding h1 { color: #002d4b; text-align: center; margin: 10px 0; font-size: 32px; font-weight: 900; }
-        .motto { text-align: center; color: #ff8c00; font-size: 14px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background: #eef2f7; 
+            font-family: 'Noto Sans Ethiopic', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .en-mode { font-family: 'Poppins', sans-serif !important; }
+
+        .card { 
+            width: 92%; 
+            max-width: 360px; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,45,75,0.25); 
+            overflow: hidden; 
+            border: 4px solid #002d4b; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; border-bottom: 4px solid #ff8c00; }
+        .header-txt { font-weight: 1000; font-size: 18px; }
+
+        .content { padding: 15px 20px; }
+
+        /* የሲኒ ምልክት (ልክ እንደ index) */
+        .branding { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .branding i { color: #8B4513; font-size: 28px; }
+        .branding h1 { color: #8B4513; text-align: center; margin: 0; font-size: 32px; font-weight: 1000; letter-spacing: -1px; }
+
+        .motto { text-align: center; color: #ff8c00; font-size: 14px; font-weight: 1000; margin-bottom: 18px; text-transform: uppercase; }
+        
+        /* ይበልጥ ጎላ ያሉ መጻፊያ ሳጥኖች */
         .input-row { margin-bottom: 15px; }
-        .input-box { border: 2.5px solid #002d4b; border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; background: #fff; height: 35px; }
-        .input-box i { color: #002d4b; margin-right: 12px; width: 20px; text-align: center; }
-        input { border: none; outline: none; width: 100%; font-size: 18px; font-weight: 600; }
-        #error-msg { color: #d00000; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 10px; min-height: 18px; }
-        .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 16px; text-transform: uppercase; }
+        .input-box { border: 3px solid #002d4b; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; background: #fff; height: 38px; }
+        .input-box i { color: #002d4b; margin-right: 12px; font-size: 20px; width: 22px; text-align: center; }
+        input { border: none; outline: none; width: 100%; font-size: 19px; font-weight: 1000; color: #002d4b; font-family: inherit; }
+        input::placeholder { font-weight: 1000; opacity: 0.7; }
+
+        #error-msg { color: #d00000; font-size: 14px; font-weight: 1000; text-align: center; margin-bottom: 10px; min-height: 20px; }
+        
+        .btn { width: 100%; height: 48px; border-radius: 12px; border: none; font-weight: 1000; cursor: pointer; margin-bottom: 12px; font-size: 17px; text-transform: uppercase; font-family: inherit; display: flex; align-items: center; justify-content: center; }
         .register-btn { background: #ff8c00; color: white; }
         .back-btn { background: #002d4b; color: white; }
-        .footer { border-top: 2px solid #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; background: #fff; }
+
+        .footer { border-top: 3px solid #002d4b; padding: 15px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 1000; background: #f9f9f9; }
         .lang-btn { cursor: pointer; color: #002d4b; }
         .lang-btn.active { color: #ff8c00; }
     </style>
@@ -32,34 +69,36 @@
 
 <div class="card">
     <div class="yellow-bar">
-        <span id="reg-title">አዲስ አካውንት</span>
-        <span style="color:#ff8c00; font-size:22px; font-weight: 900;">18+</span>
+        <span id="reg-title" class="header-txt">አዲስ አካውንት</span>
+        <span style="color:#ff8c00; font-size:26px; font-weight: 1000;">18+</span>
     </div>
-    <div class="header-line"></div>
     
     <div class="content">
-        <div class="branding"><h1 id="brand-name">ቡናማው</h1></div>
+        <div class="branding">
+            <i class="fas fa-coffee"></i> 
+            <h1 id="brand-name">ቡናማው እጣ</h1>
+        </div>
         <div class="motto" id="play-resp">በኃላፊነት ይጫወቱ!</div>
         <div id="error-msg"></div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-user"></i>
-                <input type="text" id="name-input" placeholder="ስም" maxlength="10">
+                <input type="text" id="name-input" placeholder="ስም" maxlength="10" oninput="this.value = this.value.slice(0, 10);">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-phone"></i>
-                <input type="tel" id="p-input" placeholder="ስልክ (09...)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="tel" id="p-input" placeholder="ስልክ (09...)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
             </div>
         </div>
 
         <div class="input-row">
             <div class="input-box">
                 <i class="fas fa-key"></i>
-                <input type="password" id="pass-input" placeholder="ፒን (5 ቁጥር)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="tel" id="pass-input" placeholder="ፒን (5 ቁጥር)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);">
             </div>
         </div>
 
@@ -80,22 +119,67 @@
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app",
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const database = firebase.database();
-
     let currentLang = 'am';
+
+    function showError(msg) {
+        const errorDiv = document.getElementById('error-msg');
+        errorDiv.innerText = msg;
+        setTimeout(() => { errorDiv.innerText = ""; }, 2000);
+    }
+
+    function handleRegister() {
+        const name = document.getElementById('name-input').value.trim();
+        const phone = document.getElementById('p-input').value.trim();
+        const pass = document.getElementById('pass-input').value.trim();
+        
+        if (name === "" || name.length > 10) { 
+            showError(currentLang === 'am' ? "ስም በትክክል ያስገቡ (ቢበዛ 10)" : "INVALID NAME (MAX 10)"); 
+            return; 
+        }
+        if (phone.length !== 10 || !phone.startsWith('09')) { 
+            showError(currentLang === 'am' ? "ስልክ 10 ቁጥር (09...) መሆን አለበት" : "PHONE MUST BE 10 DIGITS (09...)"); 
+            return; 
+        }
+        if (pass.length !== 5) { 
+            showError(currentLang === 'am' ? "ፒን 5 ቁጥር መሆን አለበት" : "PIN MUST BE 5 DIGITS"); 
+            return; 
+        }
+
+        database.ref('users/' + phone).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                showError(currentLang === 'am' ? "ይህ ስልክ ቁጥር ተመዝግቧል!" : "PHONE ALREADY REGISTERED!");
+            } else {
+                database.ref('users/' + phone).set({
+                    username: name,
+                    password: pass,
+                    balance: 0,
+                    status: "active"
+                }).then(() => {
+                    localStorage.setItem('userPhone', phone);
+                    window.location.replace("home.html");
+                }).catch((error) => {
+                    showError("Error: " + error.message);
+                });
+            }
+        });
+    }
 
     function setLang(l) {
         currentLang = l;
         const isAm = (l === 'am');
-        document.getElementById('brand-name').innerText = isAm ? "ቡናማው" : "BUNAMAW";
+        document.body.classList.toggle('en-mode', !isAm);
+        document.getElementById('brand-name').innerText = isAm ? "ቡናማው እጣ" : "BUNAMAW";
         document.getElementById('reg-title').innerText = isAm ? "አዲስ አካውንት" : "NEW ACCOUNT";
         document.getElementById('play-resp').innerText = isAm ? "በኃላፊነት ይጫወቱ!" : "PLAY RESPONSIBLY!";
         document.getElementById('reg-btn-text').innerText = isAm ? "አካውንት ክፈት" : "CREATE ACCOUNT";
@@ -104,56 +188,8 @@
         document.getElementById('name-input').placeholder = isAm ? "ስም" : "NAME";
         document.getElementById('p-input').placeholder = isAm ? "ስልክ (09...)" : "PHONE (09...)";
         document.getElementById('pass-input').placeholder = isAm ? "ፒን (5 ቁጥር)" : "PIN (5 DIGITS)";
-        
         document.getElementById('lang-am').className = isAm ? 'lang-btn active' : 'lang-btn';
         document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
-    }
-
-    function showError(msg) {
-        const errorDiv = document.getElementById('error-msg');
-        errorDiv.style.color = "#d00000";
-        errorDiv.innerText = msg;
-        setTimeout(() => { if(errorDiv.innerText === msg) errorDiv.innerText = ""; }, 3000);
-    }
-
-    function handleRegister() {
-        const name = document.getElementById('name-input').value.trim();
-        const phone = document.getElementById('p-input').value.trim();
-        const pass = document.getElementById('pass-input').value.trim();
-        
-        if (!name || name.length > 10) { 
-            showError(currentLang === 'am' ? "ስም በትክክል ያስገቡ (ቢበዛ 10)" : "INVALID NAME (MAX 10)"); 
-            return; 
-        }
-        if (phone.length !== 10 || !phone.startsWith('09')) { 
-            showError(currentLang === 'am' ? "ትክክለኛ ስልክ ያስገቡ (09...)" : "INVALID PHONE (09...)"); 
-            return; 
-        }
-        if (pass.length !== 5) { 
-            showError(currentLang === 'am' ? "ፒን 5 ቁጥር መሆን አለበት" : "PIN MUST BE 5 DIGITS"); 
-            return; 
-        }
-
-        const errorDiv = document.getElementById('error-msg');
-        errorDiv.style.color = "#002d4b";
-        errorDiv.innerText = currentLang === 'am' ? "በመመዝገብ ላይ..." : "REGISTERING...";
-
-        database.ref('users/' + phone).once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-                showError(currentLang === 'am' ? "ይህ ስልክ ተመዝግቧል!" : "PHONE REGISTERED!");
-            } else {
-                database.ref('users/' + phone).set({
-                    username: name,
-                    password: pass,
-                    balance: 0,
-                    status: "active",
-                    joinedDate: new Date().toISOString()
-                }).then(() => {
-                    localStorage.setItem('userPhone', phone);
-                    window.location.replace("home.html");
-                });
-            }
-        });
     }
 </script>
 </body>
