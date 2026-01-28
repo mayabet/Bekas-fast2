@@ -15,13 +15,15 @@
         
         .app-card { width: 100%; max-width: 400px; min-height: 100vh; background: #fff; border: 3px solid #002d4b; display: flex; flex-direction: column; box-sizing: border-box; }
         
+        /* ባነር ከቡና ምልክት ጋር */
         .yellow-banner { background: #002d4b; padding: 18px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #ff8c00; color: white; }
+        .brand-wrapper { display: flex; align-items: center; gap: 8px; }
+        .coffee-icon { color: #ff8c00; font-size: 22px; } /* የቡና ፍሬ ምልክት */
         .title-txt { font-weight: 1000; font-size: 19px; }
         .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
         
         .content { padding: 15px; flex-grow: 1; }
 
-        /* ጥላው ይበልጥ ጎልቶ እንዲታይ ተደርጓል (Stronger Shadow) */
         .user-card { 
             background: #002d4b; 
             border-radius: 12px; 
@@ -31,7 +33,7 @@
             display: flex; 
             flex-direction: column;
             gap: 12px;
-            box-shadow: 0 12px 28px rgba(0, 45, 75, 0.45); /* ይበልጥ የጎላ ጥላ */
+            box-shadow: 0 12px 28px rgba(0, 45, 75, 0.45); 
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
@@ -81,7 +83,9 @@
 
 <div class="app-card">
     <div class="yellow-banner">
-        <span class="title-txt" id="title-name">ቡናማው እጣ</span>
+        <div class="brand-wrapper">
+            <i class="fas fa-seedling coffee-icon"></i> <span class="title-txt" id="title-name">ቡናማው እጣ</span>
+        </div>
         <span class="plus18">18+</span>
     </div>
 
@@ -191,7 +195,6 @@
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
         
-        // ሁሉም ጽሁፎች በአንድ ላይ ይቀየራሉ
         document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው እጣ";
         document.getElementById('txt-hi').innerText = isEn ? "HELLO" : "ሰላም";
         document.getElementById('txt-bal-lbl').innerText = isEn ? "BALANCE" : "ቀሪ ሂሳብ";
