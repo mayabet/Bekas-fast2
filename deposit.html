@@ -91,27 +91,23 @@
 </div>
 
 <script>
-    // --- አዲሱ Firebase Configuration ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    // Initialize Firebase
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
     const database = firebase.database();
     
-    // User identifier from local storage
     const userPhone = localStorage.getItem('userPhone') || "Guest";
 
-    // Update real-time balance
     if (userPhone !== "Guest") {
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const userData = snapshot.val();
@@ -124,6 +120,7 @@
     const trInput = document.getElementById('tr-input');
     const amInput = document.getElementById('am-input');
 
+    // ኮዱ በትክክል 10 ዲጂት ብቻ እንዲሆን መቆጣጠሪያ
     trInput.oninput = function() {
         let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         if (val.length > 10) val = val.substring(0, 10);
@@ -145,21 +142,28 @@
         setTimeout(() => d.innerText = "", 5000);
     }
 
-    // Submit deposit request
     function handleDeposit() {
         const code = trInput.value.trim();
-        const amount = parseInt(amInput.value.trim());
+        const amount = amInput.value.trim();
 
+        // 1. የኮድ ርዝመት ማረጋገጫ (10 ዲጂት መሆኑን)
         if (code.length !== 10) {
-            showMsg(currentLang === 'am' ? "ኮዱ በትክክል 10 ዲጂት መሆን አለበት!" : "CODE MUST BE 10 DIGITS!", "#d00000");
-            return;
-        }
-        if (isNaN(amount) || amount < 50) {
-            showMsg(currentLang === 'am' ? "ቢያንስ 50 ብር ያስገቡ!" : "MINIMUM 50 BIRR!", "#d00000");
+            showMsg(currentLang === 'am' ? "ስህተት፡ ኮዱ የግድ 10 ዲጂት መሆን አለበት!" : "ERROR: CODE MUST BE 10 DIGITS!", "#d00000");
             return;
         }
 
-        // Push data to 'deposit_requests' node
+        // 2. የገንዘብ መጠን ማረጋገጫ
+        if (!amount || isNaN(amount) || parseInt(amount) < 5) {
+            showMsg(currentLang === 'am' ? "ትክክለኛ የገንዘብ መጠን ያስገቡ!" : "ENTER VALID AMOUNT!", "#d00000");
+            return;
+        }
+
+        if (userPhone === "Guest") {
+            showMsg(currentLang === 'am' ? "እባክዎ መጀመሪያ ይግቡ!" : "PLEASE LOGIN FIRST!", "#d00000");
+            return;
+        }
+
+        // ለአድሚን እንዲታይ ዳታውን መላክ
         database.ref('deposit_requests').push({ 
             phone: userPhone, 
             transactionCode: code, 
@@ -167,7 +171,7 @@
             status: "pending", 
             time: new Date().toLocaleString() 
         }).then(() => {
-            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በቅርቡ ይረጋገጣል።" : "SUCCESS! REQUEST SENT.", "#2e7d32");
+            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! አድሚን እስኪያረጋግጥ ይጠብቁ።" : "REQUEST SENT! WAIT FOR APPROVAL.", "#2e7d32");
             trInput.value = ""; 
             amInput.value = "";
         }).catch((error) => {
