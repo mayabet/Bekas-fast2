@@ -3,80 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mita Betting - Play 2 (100 Birr)</title>
+    <title>Mita Betting - Play 2 (30 People)</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    
     <style>
         html, body { margin: 0; padding: 0; background: #eef2f7; font-family: sans-serif; overflow-y: auto; }
-        .app-container { width: 100%; max-width: 400px; min-height: 100vh; border: 2.5px solid #002d4b; margin: 0 auto; display: flex; flex-direction: column; background: #fff; box-sizing: border-box; }
-        .yellow-banner { background: #002d4b; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3.5px solid #ff8c00; color: white; }
-        .game-title { font-weight: 900; font-size: 14px; }
-        .plus18 { color: #ff8c00; font-size: 22px; font-weight: 900; }
-        .info-bar { display: flex; justify-content: space-between; padding: 10px; background: #f9f9f9; border-bottom: 1px solid #ddd; font-size: 12px; font-weight: 900; color: #002d4b; }
-        .main-content { padding: 10px; flex-grow: 1; }
+        .app-container { width: 100%; max-width: 400px; min-height: 100vh; border: 3px solid #002d4b; margin: 0 auto; display: flex; flex-direction: column; background: #fff; box-sizing: border-box; }
         
-        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 15px; }
-        .num-cell { height: 50px; background: #fff; border: 2px solid #002d4b; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 18px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
-        .num-cell.taken-cell { background: #ff4444; color: white; border-color: #ff4444; cursor: not-allowed; }
-        .num-cell.user-selected { background: #ff8c00; color: white; border-color: #ff8c00; }
+        .yellow-banner { background: #002d4b; padding: 15px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #ff8c00; color: white; }
+        .game-title { font-weight: 1000; font-size: 17px; }
+        .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
         
-        #msg-box { background: #002d4b; color: #fff; padding: 12px; text-align: center; border-radius: 8px; font-weight: 800; font-size: 14px; margin-bottom: 15px; }
+        .info-section { padding: 8px 12px; color: #002d4b; font-weight: 1000; font-size: 13px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 1.5px solid #ccc; }
         
-        .live-view { background: #f0f0f0; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 15px; border: 2px dashed #002d4b; }
-        .circle-display { width: 100px; height: 100px; border-radius: 50%; background: #002d4b; color: white; display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: 900; margin: 0 auto 10px; border: 4px solid #ff8c00; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
+        
+        .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; text-decoration: none !important; }
+        
+        .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; margin: 0 5px; }
+        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; }
+        
+        .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
+        .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
+        
+        .stats-area { padding: 10px; }
+        .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
+        .stat-card { flex: 1; background: #fff; border: 3px solid #002d4b; border-radius: 10px; padding: 4px; text-align: center; height: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .stat-label-bold { display: block; font-size: 14px; font-weight: 1000; margin-bottom: 2px; color: #002d4b; }
+        .stat-val-bold { font-size: 24px; font-weight: 1000; }
+        
+        .msg-box { background: #fff8e1; border: 2px solid #ff8c00; border-left: 8px solid #ff8c00; padding: 8px; text-align: center; font-weight: 1000; font-size: 15px; color: #002d4b; border-radius: 6px; margin-bottom: 10px; }
 
-        .table-area { width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 800; margin-top: 10px; }
-        .table-area th { background: #002d4b; color: white; padding: 8px; text-align: left; }
-        .table-area td { border: 1px solid #ddd; padding: 8px; }
-        .id-col { width: 40px; text-align: center; background: #eee; }
-        
-        .footer-btns { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1.5px solid #002d4b; }
-        .btn { padding: 12px; border: none; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; text-align: center; text-decoration: none; }
-        .btn-home { background: #777; color: white; }
-        .lang-link { color: #002d4b; font-weight: 900; cursor: pointer; font-size: 12px; }
-        .lang-link.active { color: #ff8c00; }
+        .list-container { margin: 10px; border: 3px solid #002d4b; border-radius: 10px; overflow: hidden; }
+        .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; font-size: 16px; }
+        .scroll-area { height: 210px; overflow-y: auto; background: #fff; } 
+        .selected-list td { border-bottom: 1.5px solid #eee; height: 42px; padding: 0 12px; font-weight: 1000; font-size: 15px; color: #000; }
+        .id-col { width: 55px; border-right: 3px solid #002d4b; text-align: center; background: #f1f1f1; font-weight: 1000; color: #002d4b; }
+
+        .footer { padding: 15px; }
+        .btn-back { display: block; padding: 15px; text-align: center; color: white; font-weight: 1000; text-decoration: none; border-radius: 10px; background: #6c757d; font-size: 18px; }
+
+        .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
+        .lang-link { cursor: pointer; color: #002d4b; padding: 5px; text-decoration: none !important; }
+        .lang-link.active { color: #ff8c00; text-decoration: none !important; }
+        .lang-label { color: #002d4b; }
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <div class="yellow-banner">
-        <span class="game-title" id="t-game">የ 100 ብር ጨዋታ (30 ሰው)</span>
+        <span class="game-title" id="gt">100 ብር | 1ኛ: 2500 | 2ኛ: 300</span>
         <span class="plus18">18+</span>
     </div>
-
-    <div class="info-bar">
-        <span id="date-label">DATE: --/--/--</span>
-        <span id="time-label">TIME: 00:00:00</span>
+    <div class="info-section">
+        <span><span id="txt-date">ቀን</span>: <span id="date-label"></span></span>
+        <span><span id="txt-time">ሰዓት</span>: <span id="time-label"></span></span>
     </div>
-
-    <div class="main-content">
-        <div id="msg-box">ቁጥር ይምረጡ / SELECT A NUMBER</div>
-
-        <div class="live-view">
-            <div class="circle-display" id="live-num">?</div>
-            <div style="font-weight: 900; color: #002d4b;" id="t-live">ቀጥታ ውጤት</div>
+    <div class="balance-bar">
+        <span id="bl">ቀሪ ሂሳብ</span>
+        <span><span id="cash">0.00</span> <small style="font-size: 15px;">ብር</small></span>
+    </div>
+    <div class="instruction" id="ins">ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ</div>
+    <div class="number-grid" id="grid-container"></div>
+    <div class="stats-area">
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-label-bold" id="txt-round">ዙር</span>
+                <span class="stat-val-bold" id="round-val">1</span>
+            </div>
+            <div class="stat-card" style="border-color: #ff8c00;">
+                <span class="stat-label-bold" id="txt-w1" style="color: #ff8c00;">1ኛ ቁጥር</span>
+                <span class="stat-val-bold" id="win1-val" style="color: #ff8c00;">-</span>
+            </div>
+            <div class="stat-card" style="border-color: #00b050;">
+                <span class="stat-label-bold" id="txt-w2" style="color: #00b050;">2ኛ ቁጥር</span>
+                <span class="stat-val-bold" id="win2-val" style="color: #00b050;">-</span>
+            </div>
         </div>
-
-        <div class="num-grid" id="grid-container"></div>
-
-        <table class="table-area">
-            <thead>
-                <tr>
-                    <th id="th-num">ቁጥር</th>
-                    <th id="th-name">ተጫዋች</th>
-                </tr>
-            </thead>
-            <tbody id="sel-table"></tbody>
-        </table>
+        <div class="msg-box" id="msg-box">ተጫዋች እየተጠበቀ ነው...</div>
     </div>
-
-    <div class="footer-btns">
-        <a href="home.html" class="btn btn-home" id="btn-home">ተመለስ</a>
-        <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
-            <span class="lang-link active" id="l-am" onclick="setLang('am')">አማርኛ</span> | 
-            <span class="lang-link" id="l-en" onclick="setLang('en')">EN</span>
+    <div class="list-container">
+        <div class="list-header" id="sh">የተመረጡ ቁጥሮች ዝርዝር</div>
+        <div class="scroll-area">
+            <table class="selected-list" id="sel-table" style="width: 100%; border-collapse: collapse;"></table>
+        </div>
+    </div>
+    <div class="footer">
+        <a href="home.html" class="btn-back" id="bb">ተመለስ</a>
+    </div>
+    <div class="lang-bar">
+        <span id="ll" class="lang-label">ቋንቋ</span>
+        <div>
+            <span class="lang-link active" id="l-am" onclick="setLang('am')">አማርኛ</span> 
+            <span style="color: #002d4b;">|</span>
+            <span class="lang-link" id="l-en" onclick="setLang('en')">ENGLISH</span>
         </div>
     </div>
 </div>
@@ -85,7 +105,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -94,83 +114,71 @@
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const gameRef = database.ref('live_game/play2'); // Play 2 path
 
     const userPhone = localStorage.getItem('userPhone');
-    let userName = "User";
-    let userBalance = 0;
-    let currentLang = 'am';
+    let userName = "", balance = 0, currentLang = 'am', selections = {}, isPlaying = false;
 
-    if (userPhone) {
-        database.ref('users/' + userPhone).on('value', snap => {
-            const data = snap.val();
-            if (data) {
-                userName = data.username || "User";
-                userBalance = data.balance || 0;
-            }
+    const trans = {
+        'am': {gt:'100 ብር | 1ኛ: 2500 | 2ኛ: 300', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', low:'በቂ ቀሪ ሂሳብ የሎትም!', wait:'ተጫዋች እየተጠበቀ ነው...', 'txt-date':'ቀን', 'txt-time':'ሰዓት', 'txt-round':'ዙር', 'txt-w1':'1ኛ ቁጥር', 'txt-w2':'2ኛ ቁጥር'},
+        'en': {gt:'100 ETB | 1st: 2500 | 2nd: 300', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED NUMBERS LIST', bb:'BACK', ll:'LANGUAGE', low:'INSUFFICIENT BALANCE!', wait:'Waiting for players...', 'txt-date':'DATE', 'txt-time':'TIME', 'txt-round':'ROUND', 'txt-w1':'1st No.', 'txt-w2':'2nd No.'}
+    };
+
+    if (!userPhone) window.location.replace("index.html");
+    else {
+        database.ref('users/' + userPhone).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) { userName = data.username; balance = parseFloat(data.balance || 0); document.getElementById('cash').innerText = balance.toFixed(2); }
         });
     }
 
-    database.ref('games/game2').on('value', snap => {
-        const gameData = snap.val() || {};
-        const selections = gameData.selections || {};
-        const liveResult = gameData.liveResult || "?";
-        
-        document.getElementById('live-num').innerText = liveResult;
-        renderGrid(selections);
-        renderTable(selections);
+    const grid = document.getElementById('grid-container');
+    for(let i=1; i<=30; i++) {
+        let cell = document.createElement('div'); cell.className = 'num-cell'; cell.id = `c-${i}`; cell.innerText = i; cell.onclick = () => pick(i); grid.appendChild(cell);
+    }
+
+    gameRef.on('value', (snapshot) => {
+        selections = snapshot.val() || {};
+        updateUI();
     });
 
-    function renderGrid(selections) {
-        const container = document.getElementById('grid-container');
-        container.innerHTML = "";
-        for (let i = 1; i <= 30; i++) {
-            const cell = document.createElement('div');
-            cell.innerText = i;
-            cell.className = "num-cell";
-            if (selections[i]) {
-                cell.classList.add(selections[i] === userName ? "user-selected" : "taken-cell");
-            } else {
-                cell.onclick = () => selectNumber(i);
+    function pick(n) {
+        if(isPlaying || selections[n]) return;
+        if (balance < 100) { document.getElementById('msg-box').innerText = trans[currentLang].low; return; }
+        database.ref('users/' + userPhone).update({ balance: balance - 100 });
+        gameRef.child(n).set(userName);
+    }
+
+    function updateUI() {
+        const table = document.getElementById('sel-table'); table.innerHTML = "";
+        let count = 0;
+        for(let i=1; i<=30; i++) {
+            const cell = document.getElementById(`c-${i}`);
+            let occupant = selections[i] || "";
+            cell.className = occupant === userName ? "num-cell user-selected" : (occupant !== "" ? "num-cell taken-cell" : "num-cell");
+            if (occupant !== "") {
+                table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occupant}</td></tr>`;
+                count++;
             }
-            container.appendChild(cell);
         }
+        if(!isPlaying) document.getElementById('msg-box').innerText = (currentLang === 'am' ? "የተመረጡ ቁጥሮች፡ " : "Selected: ") + count + "/30";
     }
 
-    function selectNumber(num) {
-        if (!userPhone) return alert("Please Login!");
-        if (userBalance < 100) return alert(currentLang === 'am' ? "በቂ ሂሳብ የለዎትም!" : "Insufficient Balance!");
-
-        if (confirm((currentLang === 'am' ? "ቁጥር " : "Select Number ") + num + " (100 Birr)?")) {
-            const newBal = userBalance - 100;
-            database.ref('users/' + userPhone).update({ balance: newBal });
-            database.ref('games/game2/selections/' + num).set(userName);
+    function setLang(l) { 
+        currentLang = l; 
+        document.getElementById('l-am').className = l === 'am' ? 'lang-link active' : 'lang-link';
+        document.getElementById('l-en').className = l === 'en' ? 'lang-link active' : 'lang-link';
+        for(let k in trans[l]) { 
+            let el = document.getElementById(k);
+            if(el) el.innerText = trans[l][k]; 
         }
+        updateUI();
     }
 
-    function renderTable(selections) {
-        const table = document.getElementById('sel-table');
-        table.innerHTML = "";
-        Object.keys(selections).forEach(num => {
-            table.innerHTML += `<tr><td class="id-col">${num}</td><td>${selections[num]}</td></tr>`;
-        });
-    }
-
-    function setLang(l) {
-        currentLang = l;
-        const isEn = l === 'en';
-        document.getElementById('t-game').innerText = isEn ? "100 BIRR GAME (30 PPL)" : "የ 100 ብር ጨዋታ (30 ሰው)";
-        document.getElementById('t-live').innerText = isEn ? "LIVE RESULT" : "ቀጥታ ውጤት";
-        document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
-        document.getElementById('th-num').innerText = isEn ? "NO." : "ቁጥር";
-        document.getElementById('th-name').innerText = isEn ? "PLAYER" : "ተጫዋች";
-        document.getElementById('l-am').className = isEn ? 'lang-link' : 'lang-link active';
-        document.getElementById('l-en').className = isEn ? 'lang-link active' : 'lang-link';
-    }
-
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('time-label').innerText = "TIME: " + now.toLocaleTimeString();
-        document.getElementById('date-label').innerText = "DATE: " + now.toLocaleDateString();
+    setInterval(() => { 
+        const now = new Date(); 
+        document.getElementById('time-label').innerText = now.toLocaleTimeString(); 
+        document.getElementById('date-label').innerText = now.toDateString().toUpperCase(); 
     }, 1000);
 </script>
 </body>
