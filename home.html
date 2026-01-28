@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Home</title>
+    <title>ቡናማው - Home</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
@@ -14,67 +13,68 @@
         body { background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .en-mode { font-family: 'Poppins', sans-serif !important; }
         
-        /* የውጪው ቦርደር እዚህ ጋር 3px ተደርጓል */
-        .app-card { width: 92%; max-width: 360px; background: #fff; border-radius: 15px; border: 3px solid #002d4b; overflow: hidden; display: flex; flex-direction: column; }
+        .app-card { width: 100%; max-width: 400px; min-height: 100vh; background: #fff; border: 3px solid #002d4b; display: flex; flex-direction: column; box-sizing: border-box; }
         
-        .yellow-bar { background: #002d4b; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
-        .title-txt { font-weight: 900; font-size: 18px; }
-        .plus18 { color: #ff8c00; font-size: 20px; font-weight: 900; }
-        .header-line { height: 3px; background: #ff8c00; width: 100%; }
-        .content { padding: 15px; }
+        .yellow-banner { background: #002d4b; padding: 18px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #ff8c00; color: white; }
+        .title-txt { font-weight: 1000; font-size: 19px; }
+        .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
+        
+        .content { padding: 15px; flex-grow: 1; }
 
-        /* የሰላም/ባላንስ ሳጥን ቦርደር እዚህ ጋር 3px ተደርጓል */
-        .user-card { background: #f9f9f9; border: 3px solid #002d4b; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .user-card { background: #f9f9f9; border: 3px solid #002d4b; border-radius: 10px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .greet { color: #002d4b; font-weight: 1000; font-size: 16px; }
+        .bal { font-weight: 1000; font-size: 22px; color: #ff8c00; }
         
-        .greet { color: #002d4b; font-weight: 800; font-size: 15px; }
-        .bal { font-weight: 900; font-size: 19px; color: #ff8c00; }
-        .q-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
-        .q-btn { padding: 10px; border: none; color: white; font-weight: 800; border-radius: 8px; text-align: center; text-decoration: none; font-size: 13px; }
-        .q-dep { background: #002d4b; }
+        .q-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .q-btn { padding: 12px; border: none; color: white; font-weight: 1000; border-radius: 10px; text-align: center; text-decoration: none; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .q-dep { background: #00b050; }
         .q-with { background: #ff8c00; }
-        .game-item { border-bottom: 2px solid #ccd6dd; padding: 20px 0; display: flex; align-items: center; justify-content: space-between; }
-        .game-item:last-child { border-bottom: none; }
-        .p-box { width: 52px; height: 52px; background: #002d4b; color: #fff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 900; font-size: 18px; margin-right: 12px; flex-shrink: 0; }
-        .p-box span { font-size: 10px; }
-        .game-info { flex-grow: 1; }
-        .p-bold { color: #002d4b; font-weight: 900; font-size: 16px; margin-bottom: 4px; display: block; }
-        .win-row { display: flex; gap: 12px; font-size: 13px; font-weight: 700; color: #333; }
-        .win-val { color: #ff8c00; font-weight: 900; font-size: 15px; }
-        .play-btn { background: #002d4b; color: white; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: 900; font-size: 13px; }
-        .footer-area { padding: 10px 15px; background: #fcfcfc; border-top: 1px solid #eee; }
-        .f-link { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; margin-bottom: 8px; font-size: 14px; font-family: inherit; display: block; text-align: center; text-decoration: none; }
-        .l-rule { background: #ff8c00; color: white; }
-        .l-out { background: #d00000; color: white; }
-        .lang-bar { padding: 10px 15px; display: flex; justify-content: space-between; font-weight: 900; font-size: 14px; border-top: 1px solid #eee; }
-        .lang-btn { cursor: pointer; color: #002d4b; }
-        .lang-btn.active { color: #ff8c00; }
+
+        .game-item { border: 2.5px solid #002d4b; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; background: #fff; }
+        .p-box { width: 55px; height: 55px; background: #002d4b; color: #fff; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 1000; font-size: 18px; flex-shrink: 0; }
+        .p-box span { font-size: 11px; }
+        
+        .game-info { flex-grow: 1; margin-left: 12px; }
+        .p-bold { color: #002d4b; font-weight: 1000; font-size: 18px; margin-bottom: 4px; display: block; }
+        .win-row { display: flex; gap: 10px; font-size: 13px; font-weight: 800; color: #444; }
+        .win-val { color: #ff8c00; font-weight: 1000; }
+        
+        .play-btn { background: #002d4b; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 1000; font-size: 14px; }
+
+        .footer-area { padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .f-link { width: 100%; padding: 14px; border-radius: 10px; border: 2.5px solid #002d4b; font-weight: 1000; cursor: pointer; font-size: 15px; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .l-rule { background: #fff; color: #002d4b; }
+        .l-out { background: #d00000; color: white; border-color: #a00000; }
+
+        .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
+        .lang-link { cursor: pointer; color: #002d4b; }
+        .lang-link.active { color: #ff8c00; }
     </style>
 </head>
 <body>
 
 <div class="app-card">
-    <div class="yellow-bar">
+    <div class="yellow-banner">
         <span class="title-txt" id="title-name">ቡናማው</span>
         <span class="plus18">18+</span>
     </div>
-    <div class="header-line"></div>
 
     <div class="content">
         <div class="user-card">
-            <div class="greet"><span id="txt-hi">ሰላም</span>, <span id="user-nick">...</span></div>
-            <div class="bal"><span id="user-balance">00000</span> <small id="txt-curr">ብር</small></div>
+            <div class="greet"><i class="fas fa-user-alt"></i> <span id="txt-hi">ሰላም</span>, <span id="user-nick">...</span></div>
+            <div class="bal"><span id="user-balance">0.00</span> <small id="txt-curr" style="font-size: 14px;">ብር</small></div>
         </div>
 
         <div class="q-actions">
-            <a href="deposit.html" class="q-btn q-dep" id="btn-dep">ብር አስገባ</a>
-            <a href="withdraw.html" class="q-btn q-with" id="btn-with">ብር አውጣ</a>
+            <a href="deposit.html" class="q-btn q-dep" id="btn-dep"><i class="fas fa-plus-circle"></i> <span>ብር አስገባ</span></a>
+            <a href="withdraw.html" class="q-btn q-with" id="btn-with"><i class="fas fa-minus-circle"></i> <span>ብር አውጣ</span></a>
         </div>
 
         <div id="games-container">
             <div class="game-item">
                 <div class="p-box">50 <span class="txt-br">ብር</span></div>
                 <div class="game-info">
-                    <span class="p-bold"><span class="txt-ppl">30 ሰው</span></span>
+                    <span class="p-bold" id="p1-title">30 ሰው</span>
                     <div class="win-row">
                         <span><span class="txt-1st">1ኛ</span>: <span class="win-val">1200</span></span>
                         <span><span class="txt-2nd">2ኛ</span>: <span class="win-val">200</span></span>
@@ -86,9 +86,9 @@
             <div class="game-item">
                 <div class="p-box">100 <span class="txt-br">ብር</span></div>
                 <div class="game-info">
-                    <span class="p-bold"><span class="txt-ppl">30 ሰው</span></span>
+                    <span class="p-bold" id="p2-title">30 ሰው</span>
                     <div class="win-row">
-                        <span><span class="txt-1st">1ኛ</span>: <span class="win-val">2550</span></span>
+                        <span><span class="txt-1st">1ኛ</span>: <span class="win-val">2500</span></span>
                         <span><span class="txt-2nd">2ኛ</span>: <span class="win-val">300</span></span>
                     </div>
                 </div>
@@ -98,10 +98,10 @@
             <div class="game-item">
                 <div class="p-box">200 <span class="txt-br">ብር</span></div>
                 <div class="game-info">
-                    <span class="p-bold"><span class="txt-ppl">30 ሰው</span></span>
+                    <span class="p-bold" id="p3-title">30 ሰው</span>
                     <div class="win-row">
-                        <span><span class="txt-1st">1ኛ</span>: <span class="win-val">5150</span></span>
-                        <span><span class="txt-2nd">2ኛ</span>: <span class="win-val">600</span></span>
+                        <span><span class="txt-1st">1ኛ</span>: <span class="win-val">5200</span></span>
+                        <span><span class="txt-2nd">2ኛ</span>: <span class="win-val">500</span></span>
                     </div>
                 </div>
                 <a href="play3.html" class="play-btn btn-go">ተጫወት</a>
@@ -110,15 +110,15 @@
     </div>
 
     <div class="footer-area">
-        <a href="info.html" class="f-link l-rule" id="btn-rule">መረጃ እና መመሪያ</a>
-        <button onclick="handleLogout()" class="f-link l-out" id="id-out">ከመለያ ውጣ</button>
+        <a href="info.html" class="f-link l-rule" id="btn-rule"><i class="fas fa-info-circle"></i> መረጃ እና መመሪያ</a>
+        <button onclick="handleLogout()" class="f-link l-out" id="id-out"><i class="fas fa-sign-out-alt"></i> ከመለያ ውጣ</button>
     </div>
 
     <div class="lang-bar">
-        <div id="txt-lang">ቋንቋ</div>
+        <span id="txt-lang">ቋንቋ</span>
         <div>
-            <span id="lang-am" class="lang-btn active" onclick="setLang('am')">አማርኛ</span> | 
-            <span id="lang-en" class="lang-btn" onclick="setLang('en')">ENGLISH</span>
+            <span id="lang-am" class="lang-link active" onclick="setLang('am')">አማርኛ</span> | 
+            <span id="lang-en" class="lang-link" onclick="setLang('en')">ENGLISH</span>
         </div>
     </div>
 </div>
@@ -127,7 +127,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/",
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -136,7 +136,6 @@
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-
     const userPhone = localStorage.getItem('userPhone');
     
     if (!userPhone) {
@@ -146,7 +145,7 @@
             const userData = snapshot.val();
             if (userData) {
                 document.getElementById('user-nick').innerText = userData.username || "ተጠቃሚ";
-                document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                document.getElementById('user-balance').innerText = parseFloat(userData.balance || 0).toFixed(2);
             } else {
                 handleLogout();
             }
@@ -157,20 +156,22 @@
         const isEn = l === 'en';
         document.body.classList.toggle('en-mode', isEn);
         document.getElementById('title-name').innerText = isEn ? "BUNAMAW" : "ቡናማው";
-        document.getElementById('txt-hi').innerText = isEn ? "HELLO" : "ሰላም";
+        document.getElementById('txt-hi').innerText = isEn ? "Hello" : "ሰላም";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
-        document.getElementById('btn-dep').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
-        document.getElementById('btn-with').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
-        document.getElementById('btn-rule').innerText = isEn ? "INFO & MANUAL" : "መረጃ እና መመሪያ";
-        document.getElementById('id-out').innerText = isEn ? "LOGOUT" : "ከመለያ ውጣ";
-        document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
+        document.getElementById('btn-dep').querySelector('span').innerText = isEn ? "DEPOSIT" : "ብር አስገባ";
+        document.getElementById('btn-with').querySelector('span').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
+        
+        document.getElementById('p1-title').innerText = isEn ? "30 People" : "30 ሰው";
+        document.getElementById('p2-title').innerText = isEn ? "30 People" : "30 ሰው";
+        document.getElementById('p3-title').innerText = isEn ? "30 People" : "30 ሰው";
+
         document.querySelectorAll('.btn-go').forEach(el => el.innerText = isEn ? "PLAY" : "ተጫወት");
         document.querySelectorAll('.txt-br').forEach(el => el.innerText = isEn ? "BIRR" : "ብር");
-        document.querySelectorAll('.txt-ppl').forEach(el => el.innerText = isEn ? "30 PEOPLE" : "30 ሰው");
         document.querySelectorAll('.txt-1st').forEach(el => el.innerText = isEn ? "1st" : "1ኛ");
         document.querySelectorAll('.txt-2nd').forEach(el => el.innerText = isEn ? "2nd" : "2ኛ");
-        document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
-        document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
+
+        document.getElementById('lang-am').className = isEn ? 'lang-link' : 'lang-link active';
+        document.getElementById('lang-en').className = isEn ? 'lang-link active' : 'lang-link';
     }
 
     function handleLogout() {
