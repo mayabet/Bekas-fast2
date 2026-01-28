@@ -37,7 +37,6 @@
     </style>
 </head>
 <body>
-
 <div class="card">
     <div class="yellow-bar">
         <span id="promo-tag">ባለ 50, 100, 200</span>
@@ -78,7 +77,6 @@
 </div>
 
 <script>
-    // --- Updated Firebase Configuration for bekas-fast2 ---
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -93,42 +91,16 @@
     const database = firebase.database();
 
     let currentLang = 'am';
-
     function updateClock() {
         const n = new Date();
-        const mEN = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         const mAM = ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"];
         let hours = n.getHours(); 
         const ampmAM = hours >= 12 ? ' ከሰዓት' : ' ጠዋት';
-        const ampmEN = hours >= 12 ? ' PM' : ' AM';
         hours = hours % 12 || 12;
-        
-        if(currentLang === 'am') {
-            document.getElementById('date-label').innerText = "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
-            document.getElementById('time-label').innerText = "ሰዓት: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
-        } else {
-            document.getElementById('date-label').innerText = "DATE: " + mEN[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
-            document.getElementById('time-label').innerText = "TIME: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmEN;
-        }
+        document.getElementById('date-label').innerText = "ቀን: " + mAM[n.getMonth()] + " " + n.getDate() + ", " + n.getFullYear();
+        document.getElementById('time-label').innerText = "ሰዓት: " + hours + ":" + n.getMinutes().toString().padStart(2, '0') + ":" + n.getSeconds().toString().padStart(2, '0') + ampmAM;
     }
     setInterval(updateClock, 1000);
-
-    function setLang(l) {
-        currentLang = l;
-        document.body.classList.toggle('en-mode', l === 'en');
-        document.getElementById('brand-name').innerText = (l === 'am') ? "ቡናማዉ" : "BUNAMAW";
-        document.getElementById('l-btn').innerText = (l === 'am') ? "ግባ" : "LOG IN";
-        document.getElementById('r-btn').innerText = (l === 'am') ? "ተመዝገብ" : "REGISTER";
-        document.getElementById('l-text').innerText = (l === 'am') ? "ቋንቋ" : "LANGUAGE";
-        document.getElementById('pass-input').placeholder = (l === 'am') ? "ሚስጥር ቁጥር" : "PIN"; 
-        document.getElementById('lost-btn').innerText = (l === 'am') ? "ጠፋብኝ" : "LOST";
-        document.getElementById('motto').innerText = (l === 'am') ? "ፈጣን ቀልጣፋ አስተማማኝ" : "FAST EFFICIENT RELIABLE";
-        document.getElementById('lang-am').className = l === 'am' ? 'lang-btn active' : 'lang-btn';
-        document.getElementById('lang-en').className = l === 'en' ? 'lang-btn active' : 'lang-btn';
-        updateClock();
-    }
-
-    window.onload = function() { setLang('am'); };
 
     function handleLogin() {
         const phone = document.getElementById('p-input').value.trim();
@@ -136,27 +108,20 @@
         const errorDiv = document.getElementById('error-msg');
 
         if (!phone || !pass) {
-            errorDiv.innerText = currentLang === 'am' ? "እባክዎ መረጃውን በትክክል ያስገቡ" : "PLEASE ENTER INFO";
+            errorDiv.innerText = "እባክዎ መረጃውን በትክክል ያስገቡ";
             return;
         }
 
         database.ref('users/' + phone).once('value').then((snapshot) => {
             const userData = snapshot.val();
             if (userData && userData.password === pass) {
-                database.ref('admin_notifications').push({ 
-                    phone: phone, 
-                    action: "Login", 
-                    time: new Date().toLocaleString() 
-                });
                 localStorage.setItem('userPhone', phone);
                 window.location.replace("home.html");
             } else {
-                errorDiv.innerText = currentLang === 'am' ? "ያልተመዘገበ መረጃ" : "NOT REGISTERED";
+                errorDiv.innerText = "ያልተመዘገበ መረጃ";
                 setTimeout(() => { errorDiv.innerText = ""; }, 3000);
             }
-        }).catch((err) => {
-            errorDiv.innerText = "Error!";
-        });
+        }).catch((err) => { errorDiv.innerText = "Network Error!"; });
     }
 </script>
 </body>
