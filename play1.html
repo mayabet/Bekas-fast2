@@ -19,18 +19,15 @@
         .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; }
         
         .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; margin: 0 5px; }
-        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.1s; position: relative; }
+        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.1s; }
         
+        /* Animation Classes */
         .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
-
-        /* አዲሱ አኒሜሽን ስታይል */
-        .anim-active { background: #ff8c00 !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 15px #ff8c00; z-index: 5; }
-        .win1-show { background: #FFD700 !important; color: #000 !important; transform: scale(1.2); z-index: 10; border-color: #fff !important; box-shadow: 0 0 20px #FFD700; animation: blink 0.3s infinite; }
-        .win2-show { background: #00b050 !important; color: #fff !important; transform: scale(1.2); z-index: 10; border-color: #fff !important; box-shadow: 0 0 20px #00b050; animation: blink 0.3s infinite; }
+        .anim-active { background: #ff8c00 !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 10px #ff8c00; }
+        .win1-show { background: #FFD700 !important; color: #000 !important; transform: scale(1.1); z-index: 10; box-shadow: 0 0 20px #FFD700; }
+        .win2-show { background: #00b050 !important; color: #fff !important; transform: scale(1.1); z-index: 10; box-shadow: 0 0 20px #00b050; }
         
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-
         .stats-area { padding: 10px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .stat-card { flex: 1; background: #fff; border: 3px solid #002d4b; border-radius: 10px; padding: 4px; text-align: center; height: 65px; display: flex; flex-direction: column; justify-content: center; }
@@ -108,62 +105,74 @@
 
     gameRef.on('value', (snapshot) => {
         selections = snapshot.val() || {};
-        if (Object.keys(selections).length > 0) { lastWinners = null; } 
         if (Object.keys(selections).length === 0) { isResetting = false; }
         updateUI();
     });
 
+    // አኒሜሽኑን የሚቀሰቅሰው ክፍል
     resultRef.on('value', (snap) => {
         const data = snap.val();
         if (data && data.status === "START_ANIMATION" && !isPlaying) { 
             isPlaying = true; 
-            runShuffleAnimation(data.win1, data.win2); 
+            console.log("Animation Started!"); // Debugging
+            startFastShuffle(data.win1, data.win2); 
         }
     });
 
-    // አዲሱ Shuffle አኒሜሽን
-    function runShuffleAnimation(w1, w2) {
-        let duration = 3500; 
-        let startTime = Date.now();
+    function startFastShuffle(w1, w2) {
+        let count = 0;
+        let maxShuffles = 40; // አኒሜሽኑ ስንት ጊዜ ብልጭ ድርግም ይበል
         
-        let timer = setInterval(() => {
+        let shuffleTimer = setInterval(() => {
+            // ሁሉንም አጽዳ
             document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
             
-            // በዘፈቀደ ሁለት ቁጥሮችን ማብራት
+            // በዘፈቀደ 2 ቁጥሮችን አብራ
             let r1 = Math.floor(Math.random() * 30) + 1;
             let r2 = Math.floor(Math.random() * 30) + 1;
-            
             document.getElementById(`c-${r1}`).classList.add('anim-active');
             document.getElementById(`c-${r2}`).classList.add('anim-active');
-
-            if (Date.now() - startTime > duration) {
-                clearInterval(timer);
-                showWinner(w1, w2);
+            
+            count++;
+            if (count >= maxShuffles) {
+                clearInterval(shuffleTimer);
+                showWinnerFinal(w1, w2);
             }
         }, 70);
     }
 
-    function showWinner(w1, w2) {
+    function showWinnerFinal(w1, w2) {
         document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
-        const c1 = document.getElementById(`c-${w1}`), c2 = document.getElementById(`c-${w2}`);
-        c1.classList.add('win1-show'); c2.classList.add('win2-show');
+        
+        const cell1 = document.getElementById(`c-${w1}`);
+        const cell2 = document.getElementById(`c-${w2}`);
+        
+        if(cell1) cell1.classList.add('win1-show');
+        if(cell2) cell2.classList.add('win2-show');
         
         document.getElementById('win1-val').innerText = w1;
         document.getElementById('win2-val').innerText = w2;
 
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        lastWinners = { w1: w1, n1: selections[w1] || "Player", w2: w2, n2: selections[w2] || "Player", time: time };
+        const timeNow = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        lastWinners = { w1: w1, n1: selections[w1] || "---", w2: w2, n2: selections[w2] || "---", time: timeNow };
 
         setTimeout(() => {
-            c1.classList.remove('win1-show'); c2.classList.remove('win2-show');
+            if(cell1) cell1.classList.remove('win1-show');
+            if(cell2) cell2.classList.remove('win2-show');
             isResetting = true;
-            if (selections[Object.keys(selections).sort((a,b)=>a-b)[0]] === userName) { 
-                gameRef.set(null); resultRef.update({status: "FINISHED"}); 
+            
+            // የመጀመሪያውን ቁጥር የመረጠው ሰው ብቻ Firebaseን ያጽዳ (Double Reset ለመከላከል)
+            const firstKey = Object.keys(selections).sort((a,b)=>a-b)[0];
+            if (selections[firstKey] === userName) { 
+                gameRef.set(null); 
+                resultRef.update({status: "FINISHED"}); 
             }
-            round++; document.getElementById('round-val').innerText = round;
+            
+            round++; 
+            document.getElementById('round-val').innerText = round;
             isPlaying = false;
             updateUI(); 
-        }, 5000); // ውጤቱ ለ 5 ሰከንድ እንዲቆይ
+        }, 4000);
     }
 
     function pick(i) {
@@ -188,6 +197,7 @@
         } else {
             for(let i=1; i<=30; i++) {
                 const cell = document.getElementById(`c-${i}`);
+                if(!cell) continue;
                 let occ = selections[i] || "";
                 if(!isPlaying) cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
                 if (occ !== "") table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td><td style="font-size:10px; color:#888;">Selected</td></tr>`;
