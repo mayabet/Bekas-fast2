@@ -37,7 +37,7 @@
         .msg-box { background: #fff8e1; border: 2px solid #ff8c00; border-left: 8px solid #ff8c00; padding: 8px; text-align: center; font-weight: 1000; font-size: 15px; color: #002d4b; border-radius: 6px; margin-bottom: 10px; }
 
         .list-container { margin: 10px; border: 3px solid #002d4b; border-radius: 10px; overflow: hidden; }
-        .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; font-size: 16px; transition: background 0.3s; }
+        .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; font-size: 16px; }
         .scroll-area { height: 210px; overflow-y: auto; background: #fff; } 
         .selected-list td { border-bottom: 1.5px solid #eee; height: 42px; padding: 0 12px; font-weight: 1000; font-size: 15px; color: #000; }
         .id-col { width: 55px; border-right: 3px solid #002d4b; text-align: center; background: #f1f1f1; font-weight: 1000; color: #002d4b; }
@@ -156,33 +156,28 @@
     function resetGridColors() {
         for(let i=1; i<=30; i++) {
             const cell = document.getElementById(`c-${i}`);
-            if(cell) cell.className = "num-cell";
+            if(cell) {
+                cell.className = "num-cell";
+                cell.innerText = i;
+            }
         }
     }
 
     function pick(n) {
-        // 1. መጀመሪያ ማጥፋት (Cancel) ከፈለገ - ጨዋታው ካልጀመረ ብቻ
         if (selections[n] === userName && !isPlaying) {
             gameRef.child(n).remove().then(() => {
                 database.ref('users/' + userPhone).update({ balance: balance + 50 });
             });
             return;
         }
-
-        // 2. ጨዋታው ከጀመረ ወይም ቁጥሩ በሌላ ሰው ከተያዘ እንዳይነካ መከልከል
         if(isPlaying || isResetting || selections[n]) return;
-
-        // 3. አዲስ ቁጥር ለመያዝ የሂሳብ መጠን ማረጋገጥ
-        if (balance < 50) { 
-            document.getElementById('msg-box').innerText = trans[currentLang].low; 
-            return; 
-        }
+        if (balance < 50) { document.getElementById('msg-box').innerText = trans[currentLang].low; return; }
         
-        // 4. ቁጥሩን መያዝ
         database.ref('users/' + userPhone).update({ balance: balance - 50 });
         gameRef.child(n).set(userName).then(() => {
             gameRef.once('value', (snap) => {
-                const count = Object.keys(snap.val() || {}).length;
+                const currentSelections = snap.val() || {};
+                const count = Object.keys(currentSelections).length;
                 if (count === 30 && !isPlaying) {
                     let w1 = Math.floor(Math.random() * 30) + 1;
                     let w2;
@@ -209,8 +204,11 @@
 
     function finishGame(w1, w2) {
         const msg = document.getElementById('msg-box');
+        
+        // ቦክስ ላይ ቁጥሩን ብቻ ማሳየት
         document.getElementById('win1-val').innerText = w1;
         document.getElementById('win2-val').innerText = w2;
+
         document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
         
         document.getElementById(`c-${w1}`).classList.add('winner-cell');
@@ -218,6 +216,7 @@
 
         let winner1 = selections[w1] || "No Winner";
         let winner2 = selections[w2] || "No Winner";
+
         database.ref('games/play1').push({ win1: w1, user1: winner1, win2: w2, user2: winner2, timestamp: Date.now() });
 
         if(selections[w1] === userName) {
@@ -242,7 +241,7 @@
             isPlaying = false; 
             resetGridColors();
             msg.innerText = "";
-        }, 6000);
+        }, 8000);
     }
 
     function showWinnerHistory() {
