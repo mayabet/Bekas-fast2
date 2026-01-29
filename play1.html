@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mita Betting - Play 1</title>
+    <title>50 ብር - Play 1</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
@@ -11,11 +11,11 @@
         .app-container { width: 100%; max-width: 400px; min-height: 100vh; border: 3px solid #002d4b; margin: 0 auto; display: flex; flex-direction: column; background: #fff; box-sizing: border-box; }
         
         .yellow-banner { background: #002d4b; padding: 15px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #ff8c00; color: white; }
-        .game-title { font-weight: 1000; font-size: 17px; }
+        .game-title { font-weight: 1000; font-size: 19px; }
         .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
         
-        /* Date & Time - Dark Blue */
-        .info-section { padding: 10px 15px; color: #002d4b; font-weight: 1000; font-size: 17px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
+        /* Date & Time - Dark Blue & Bold */
+        .info-section { padding: 10px 15px; color: #00008b; font-weight: 1000; font-size: 17px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
         
         .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
         
@@ -27,7 +27,7 @@
         .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
 
-        .anim-active { background: #ff4757 !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 15px #ff4757; z-index: 5; }
+        .anim-active { background: #ff4757 !important; color: white !important; transform: scale(1.15); box-shadow: 0 0 15px #ff4757; z-index: 5; }
         .winner-cell { background: #ffcc00 !important; color: black !important; box-shadow: 0 0 20px #ffcc00; transform: scale(1.1); z-index: 10; border: 3px solid #002d4b !important; }
         
         .stats-area { padding: 10px; }
@@ -47,7 +47,6 @@
         .footer { padding: 15px; }
         .btn-back { display: block; padding: 15px; text-align: center; color: white; font-weight: 1000; text-decoration: none; border-radius: 10px; background: #6c757d; font-size: 18px; }
 
-        /* Language Bar */
         .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
         .lang-link { cursor: pointer; color: #002d4b; padding: 5px; }
         .lang-link.active { color: #ff8c00; }
@@ -56,7 +55,7 @@
 <body>
 <div class="app-container">
     <div class="yellow-banner">
-        <span class="game-title" id="gt">Mita Betting | 1ኛ: 1200 | 2ኛ: 200</span>
+        <span class="game-title" id="gt">50 ብር | 1ኛ: 1200 | 2ኛ: 200</span>
         <span class="plus18">18+</span>
     </div>
     <div class="info-section">
@@ -125,8 +124,8 @@
     let userName = "", balance = 0, currentLang = 'am', selections = {}, isPlaying = false, isResetting = false, round = 1;
 
     const trans = {
-        'am': {gt:'Mita Betting | 1ኛ: 1200 | 2ኛ: 200', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር'},
-        'en': {gt:'Mita Betting | 1st: 1200 | 2nd: 200', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED NUMBERS LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.'}
+        'am': {gt:'50 ብር | 1ኛ: 1200 | 2ኛ: 200', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር'},
+        'en': {gt:'50 ETB | 1st: 1200 | 2nd: 200', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED NUMBERS LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.'}
     };
 
     if (!userPhone) window.location.replace("index.html");
@@ -193,7 +192,7 @@
         let interval = setInterval(() => {
             document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
             let rand;
-            do { rand = Math.floor(Math.random() * 30) + 1; } while (Math.abs(rand - lastRand) < 5);
+            do { rand = Math.floor(Math.random() * 30) + 1; } while (Math.abs(rand - lastRand) < 7);
             lastRand = rand;
             document.getElementById(`c-${rand}`).classList.add('anim-active');
 
@@ -212,8 +211,8 @@
         document.getElementById('win1-val').innerText = w1;
         document.getElementById('win2-val').innerText = w2;
 
-        let name1 = selections[w1] || "Player";
-        let name2 = selections[w2] || "Player";
+        let name1 = selections[w1] || "ተጫዋች";
+        let name2 = selections[w2] || "ተጫዋች";
 
         if (name1 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 1200 });
@@ -243,7 +242,7 @@
             if(!isPlaying) cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
             if (occ !== "") { table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; count++; }
         }
-        if(!isPlaying) document.getElementById('msg-box').innerText = (currentLang === 'am' ? "የተመረጡ ቁጥሮች: " : "Selected Numbers: ") + count + "/30";
+        if(!isPlaying) document.getElementById('msg-box').innerText = (currentLang === 'am' ? "የተመረጡ ቁጥሮች: " : "Selected: ") + count + "/30";
     }
 
     function setLang(l) { 
