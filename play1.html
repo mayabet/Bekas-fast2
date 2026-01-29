@@ -14,8 +14,8 @@
         .game-title { font-weight: 1000; font-size: 17px; }
         .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
         
-        /* Date & Time - Dark Blue & Bold */
-        .info-section { padding: 10px 15px; color: #002d4b; font-weight: 1000; font-size: 16px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
+        /* Date & Time - Dark Blue */
+        .info-section { padding: 10px 15px; color: #002d4b; font-weight: 1000; font-size: 17px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
         
         .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
         
@@ -27,7 +27,6 @@
         .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
 
-        /* Animation & Winner Effects */
         .anim-active { background: #ff4757 !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 15px #ff4757; z-index: 5; }
         .winner-cell { background: #ffcc00 !important; color: black !important; box-shadow: 0 0 20px #ffcc00; transform: scale(1.1); z-index: 10; border: 3px solid #002d4b !important; }
         
@@ -47,12 +46,17 @@
 
         .footer { padding: 15px; }
         .btn-back { display: block; padding: 15px; text-align: center; color: white; font-weight: 1000; text-decoration: none; border-radius: 10px; background: #6c757d; font-size: 18px; }
+
+        /* Language Bar */
+        .lang-bar { background: #f9f9f9; padding: 15px; display: flex; justify-content: space-between; font-weight: 1000; border-top: 3px solid #002d4b; font-size: 15px; align-items: center; }
+        .lang-link { cursor: pointer; color: #002d4b; padding: 5px; }
+        .lang-link.active { color: #ff8c00; }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="yellow-banner">
-        <span class="game-title">Mita Betting | 1ኛ: 1200 | 2ኛ: 200</span>
+        <span class="game-title" id="gt">Mita Betting | 1ኛ: 1200 | 2ኛ: 200</span>
         <span class="plus18">18+</span>
     </div>
     <div class="info-section">
@@ -60,36 +64,44 @@
         <span id="time-label"></span>
     </div>
     <div class="balance-bar">
-        <span>ቀሪ ሂሳብ</span>
+        <span id="bl">ቀሪ ሂሳብ</span>
         <span><span id="cash">0.00</span> <small style="font-size: 15px;">ብር</small></span>
     </div>
-    <div class="instruction">ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ</div>
+    <div class="instruction" id="ins">ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ</div>
     <div class="number-grid" id="grid-container"></div>
     <div class="stats-area">
         <div class="stats-row">
             <div class="stat-card">
-                <span class="stat-label-bold">ዙር</span>
+                <span class="stat-label-bold" id="txt-round">ዙር</span>
                 <span class="stat-val-bold" id="round-val">1</span>
             </div>
             <div class="stat-card" style="border-color: #ff8c00;">
-                <span class="stat-label-bold" style="color: #ff8c00;">1ኛ ቁጥር</span>
+                <span class="stat-label-bold" id="txt-w1" style="color: #ff8c00;">1ኛ ቁጥር</span>
                 <span class="stat-val-bold" id="win1-val" style="color: #ff8c00;">-</span>
             </div>
             <div class="stat-card" style="border-color: #00b050;">
-                <span class="stat-label-bold" style="color: #00b050;">2ኛ ቁጥር</span>
+                <span class="stat-label-bold" id="txt-w2" style="color: #00b050;">2ኛ ቁጥር</span>
                 <span class="stat-val-bold" id="win2-val" style="color: #00b050;">-</span>
             </div>
         </div>
         <div class="msg-box" id="msg-box">ተጫዋች እየተጠበቀ ነው...</div>
     </div>
     <div class="list-container">
-        <div class="list-header">የተመረጡ ቁጥሮች ዝርዝር</div>
+        <div class="list-header" id="sh">የተመረጡ ቁጥሮች ዝርዝር</div>
         <div class="scroll-area">
             <table class="selected-list" id="sel-table" style="width: 100%; border-collapse: collapse;"></table>
         </div>
     </div>
     <div class="footer">
-        <a href="home.html" class="btn-back">ተመለስ</a>
+        <a href="home.html" class="btn-back" id="bb">ተመለስ</a>
+    </div>
+    <div class="lang-bar">
+        <span id="ll">ቋንቋ</span>
+        <div>
+            <span class="lang-link active" id="l-am" onclick="setLang('am')">አማርኛ</span> 
+            <span style="color: #002d4b;">|</span>
+            <span class="lang-link" id="l-en" onclick="setLang('en')">ENGLISH</span>
+        </div>
     </div>
 </div>
 
@@ -110,7 +122,12 @@
     const resultRef = database.ref('live_game/play1_result');
 
     const userPhone = localStorage.getItem('userPhone');
-    let userName = "", balance = 0, selections = {}, isPlaying = false, isResetting = false, round = 1;
+    let userName = "", balance = 0, currentLang = 'am', selections = {}, isPlaying = false, isResetting = false, round = 1;
+
+    const trans = {
+        'am': {gt:'Mita Betting | 1ኛ: 1200 | 2ኛ: 200', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር'},
+        'en': {gt:'Mita Betting | 1st: 1200 | 2nd: 200', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED NUMBERS LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.'}
+    };
 
     if (!userPhone) window.location.replace("index.html");
     else {
@@ -169,17 +186,15 @@
 
     function runAnimation(w1, w2) {
         let msg = document.getElementById('msg-box');
-        msg.innerText = "እጣ እየወጣ ነው...";
+        msg.innerText = currentLang === 'am' ? "እጣ እየወጣ ነው..." : "Drawing...";
         let duration = 4000; let startTime = Date.now();
         let lastRand = -1;
         
         let interval = setInterval(() => {
             document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
-            // Randomly pick numbers with distance
             let rand;
             do { rand = Math.floor(Math.random() * 30) + 1; } while (Math.abs(rand - lastRand) < 5);
             lastRand = rand;
-            
             document.getElementById(`c-${rand}`).classList.add('anim-active');
 
             if (Date.now() - startTime > duration) {
@@ -197,17 +212,17 @@
         document.getElementById('win1-val').innerText = w1;
         document.getElementById('win2-val').innerText = w2;
 
-        let name1 = selections[w1] || "ተጫዋች";
-        let name2 = selections[w2] || "ተጫዋች";
+        let name1 = selections[w1] || "Player";
+        let name2 = selections[w2] || "Player";
 
         if (name1 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 1200 });
-            document.getElementById('msg-box').innerText = "እንኳን ደስ አለዎት! 1ኛ አሸንፈዋል!";
+            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 1ኛ አሸንፈዋል!" : "CONGRATS! YOU WON 1st!";
         } else if (name2 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 200 });
-            document.getElementById('msg-box').innerText = "እንኳን ደስ አለዎት! 2ኛ አሸንፈዋል!";
+            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 2ኛ አሸንፈዋል!" : "CONGRATS! YOU WON 2nd!";
         } else {
-            document.getElementById('msg-box').innerText = "አሸናፊዎች 1ኛ: " + name1 + " 2ኛ: " + name2;
+            document.getElementById('msg-box').innerText = (currentLang === 'am' ? "አሸናፊዎች 1ኛ: " : "Winners 1st: ") + name1 + " 2ኛ: " + name2;
         }
 
         setTimeout(() => {
@@ -228,7 +243,18 @@
             if(!isPlaying) cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
             if (occ !== "") { table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; count++; }
         }
-        if(!isPlaying) document.getElementById('msg-box').innerText = "የተመረጡ ቁጥሮች: " + count + "/30";
+        if(!isPlaying) document.getElementById('msg-box').innerText = (currentLang === 'am' ? "የተመረጡ ቁጥሮች: " : "Selected Numbers: ") + count + "/30";
+    }
+
+    function setLang(l) { 
+        currentLang = l; 
+        document.getElementById('l-am').className = l === 'am' ? 'lang-link active' : 'lang-link';
+        document.getElementById('l-en').className = l === 'en' ? 'lang-link active' : 'lang-link';
+        for(let k in trans[l]) { 
+            let el = document.getElementById(k);
+            if(el) el.innerText = trans[l][k]; 
+        }
+        updateUI();
     }
 
     setInterval(() => { 
