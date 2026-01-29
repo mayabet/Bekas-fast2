@@ -161,9 +161,21 @@
     }
 
     function pick(n) {
-        if(isPlaying || isResetting || selections[n]) return;
+        if(isPlaying || isResetting) return;
+
+        // መምረጥ ወይስ ማጥፋት?
+        if (selections[n] === userName) {
+            // ተጠቃሚው የራሱን ቁጥር ሲነካው እንዲጠፋ (Cancel)
+            gameRef.child(n).remove();
+            database.ref('users/' + userPhone).update({ balance: balance + 50 });
+            return;
+        }
+
+        if (selections[n]) return; // በሌላ ሰው ከተያዘ ምንም አያድርግ
+
         if (balance < 50) { document.getElementById('msg-box').innerText = trans[currentLang].low; return; }
         
+        // ቁጥር መያዝ
         database.ref('users/' + userPhone).update({ balance: balance - 50 });
         gameRef.child(n).set(userName).then(() => {
             gameRef.once('value', (snap) => {
@@ -185,7 +197,8 @@
         let animationInterval = setInterval(() => {
             document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
             let tempIdx = Math.floor(Math.random() * 30) + 1;
-            document.getElementById(`c-${tempIdx}`).classList.add('anim-active');
+            const cell = document.getElementById(`c-${tempIdx}`);
+            if(cell) cell.classList.add('anim-active');
             counter += speed;
             if (counter >= 3000) { clearInterval(animationInterval); finishGame(w1, w2); }
         }, speed);
@@ -219,6 +232,7 @@
         setTimeout(() => {
             isResetting = true;
             const keys = Object.keys(selections).sort((a,b) => a-b);
+            // ዳታውን የሚያጸዳው የመጀመሪያውን ቁጥር የያዘው ሰው ነው
             if (selections[keys[0]] === userName) { gameRef.set(null); resultRef.set(null); }
             document.getElementById('round-val').innerText = ++round;
             document.getElementById('win1-val').innerText = "-";
