@@ -14,31 +14,30 @@
         .game-title { font-weight: 1000; font-size: 17px; }
         .plus18 { color: #ff8c00; font-weight: 1000; font-size: 24px; }
         
-        /* Date & Time ጎላ እንዲል */
-        .info-section { padding: 12px; color: #002d4b; font-weight: 1000; font-size: 18px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
+        /* Date & Time - Dark Blue & Bold */
+        .info-section { padding: 10px 15px; color: #002d4b; font-weight: 1000; font-size: 16px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
         
         .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
         
         .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; }
         
         .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; margin: 0 5px; }
-        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.2s; position: relative; overflow: hidden; }
+        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.1s; position: relative; }
         
         .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
 
-        .anim-active { background: radial-gradient(circle, #ffeb3b, #f44336) !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 20px #f44336; z-index: 10; border: 2px solid #fff !important; }
-        .winner-cell { background: #ffcc00 !important; color: black !important; box-shadow: 0 0 25px #ffcc00; transform: scale(1.1); z-index: 15; border: 3px solid #002d4b !important; }
+        /* Animation & Winner Effects */
+        .anim-active { background: #ff4757 !important; color: white !important; transform: scale(1.1); box-shadow: 0 0 15px #ff4757; z-index: 5; }
+        .winner-cell { background: #ffcc00 !important; color: black !important; box-shadow: 0 0 20px #ffcc00; transform: scale(1.1); z-index: 10; border: 3px solid #002d4b !important; }
         
-        .win-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.85); color: #00ff00; font-size: 10px; padding: 2px 0; text-align: center; font-weight: 1000; line-height: 1; }
-
         .stats-area { padding: 10px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
         .stat-card { flex: 1; background: #fff; border: 3px solid #002d4b; border-radius: 10px; padding: 4px; text-align: center; height: 65px; display: flex; flex-direction: column; justify-content: center; }
         .stat-label-bold { display: block; font-size: 14px; font-weight: 1000; margin-bottom: 2px; color: #002d4b; }
         .stat-val-bold { font-size: 26px; font-weight: 1000; }
         
-        .msg-box { background: #fff8e1; border: 2px solid #ff8c00; border-left: 8px solid #ff8c00; padding: 10px; text-align: center; font-weight: 1000; font-size: 16px; color: #002d4b; border-radius: 6px; margin-bottom: 10px; min-height: 45px; }
+        .msg-box { background: #fff8e1; border: 2px solid #ff8c00; border-left: 8px solid #ff8c00; padding: 10px; text-align: center; font-weight: 1000; font-size: 16px; color: #002d4b; border-radius: 6px; margin-bottom: 10px; min-height: 40px; }
 
         .list-container { margin: 10px; border: 3px solid #002d4b; border-radius: 10px; overflow: hidden; }
         .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; font-size: 16px; }
@@ -57,8 +56,8 @@
         <span class="plus18">18+</span>
     </div>
     <div class="info-section">
-        <span id="date-label" style="color: #ff8c00;"></span>
-        <span id="time-label" style="color: #00b050;"></span>
+        <span id="date-label"></span>
+        <span id="time-label"></span>
     </div>
     <div class="balance-bar">
         <span>ቀሪ ሂሳብ</span>
@@ -128,11 +127,7 @@
 
     gameRef.on('value', (snapshot) => {
         selections = snapshot.val() || {};
-        // አዲስ ዙር ሲጀምር (ዳታው ሲጠፋ) ብቻ ግሪዱን አጽዳ
-        if (Object.keys(selections).length === 0) {
-            isResetting = false;
-            resetGridColors();
-        }
+        if (Object.keys(selections).length === 0) { isResetting = false; resetGridColors(); }
         updateUI();
     });
 
@@ -140,7 +135,6 @@
         const data = snap.val();
         if (data && data.status === "START_ANIMATION" && !isPlaying) { 
             isPlaying = true; 
-            // አኒሜሽን ከመጀመሩ በፊት የድሮ ውጤቶችን ከቦክስ ላይ አጽዳ
             document.getElementById('win1-val').innerText = "-";
             document.getElementById('win2-val').innerText = "-";
             runAnimation(data.win1, data.win2); 
@@ -150,7 +144,7 @@
     function resetGridColors() {
         for(let i=1; i<=30; i++) {
             const cell = document.getElementById(`c-${i}`);
-            if(cell) { cell.className = "num-cell"; cell.innerHTML = i; }
+            if(cell) { cell.className = "num-cell"; cell.innerText = i; }
         }
     }
 
@@ -161,12 +155,10 @@
             return;
         }
         if (selections[i] || balance < 50) return;
-
         database.ref('users/' + userPhone).update({ balance: balance - 50 });
         gameRef.child(i).set(userName).then(() => {
             gameRef.once('value', (snap) => {
-                const total = Object.keys(snap.val() || {}).length;
-                if (total === 30 && !isPlaying) {
+                if (Object.keys(snap.val() || {}).length === 30) {
                     let w1 = Math.floor(Math.random() * 30) + 1;
                     let w2; do { w2 = Math.floor(Math.random() * 30) + 1; } while (w2 === w1);
                     resultRef.set({ win1: w1, win2: w2, status: "START_ANIMATION" });
@@ -177,60 +169,52 @@
 
     function runAnimation(w1, w2) {
         let msg = document.getElementById('msg-box');
-        msg.innerText = "እጣ እየወጣ ነው... መልካም እድል!";
+        msg.innerText = "እጣ እየወጣ ነው...";
         let duration = 4000; let startTime = Date.now();
+        let lastRand = -1;
         
         let interval = setInterval(() => {
             document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
-            let rand = Math.floor(Math.random() * 30) + 1;
+            // Randomly pick numbers with distance
+            let rand;
+            do { rand = Math.floor(Math.random() * 30) + 1; } while (Math.abs(rand - lastRand) < 5);
+            lastRand = rand;
+            
             document.getElementById(`c-${rand}`).classList.add('anim-active');
 
             if (Date.now() - startTime > duration) {
                 clearInterval(interval);
                 finishGame(w1, w2);
             }
-        }, 80);
+        }, 90);
     }
 
     function finishGame(w1, w2) {
         document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
-        
-        const c1 = document.getElementById(`c-${w1}`);
-        const c2 = document.getElementById(`c-${w2}`);
-        c1.classList.add('winner-cell');
-        c2.classList.add('winner-cell');
+        document.getElementById(`c-${w1}`).classList.add('winner-cell');
+        document.getElementById(`c-${w2}`).classList.add('winner-cell');
+
+        document.getElementById('win1-val').innerText = w1;
+        document.getElementById('win2-val').innerText = w2;
 
         let name1 = selections[w1] || "ተጫዋች";
         let name2 = selections[w2] || "ተጫዋች";
 
-        // አሸናፊውን ግሪድ ላይ ማሳየት
-        c1.innerHTML = `${w1}<div class="win-name-overlay">${name1}<br>1200B</div>`;
-        
-        // ቦክሶቹ ላይ ውጤቱን ማስቀመጥ (እስከ ቀጣይ ዙር አይጠፋም)
-        document.getElementById('win1-val').innerText = w1;
-        document.getElementById('win2-val').innerText = w2;
-
         if (name1 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 1200 });
-            document.getElementById('msg-box').innerHTML = `🎉 1ኛ ወጥተዋል! 1200 ብር ገባ!`;
+            document.getElementById('msg-box').innerText = "እንኳን ደስ አለዎት! 1ኛ አሸንፈዋል!";
         } else if (name2 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 200 });
-            document.getElementById('msg-box').innerHTML = `🎊 2ኛ ወጥተዋል! 200 ብር ገባ!`;
+            document.getElementById('msg-box').innerText = "እንኳን ደስ አለዎት! 2ኛ አሸንፈዋል!";
         } else {
             document.getElementById('msg-box').innerText = "አሸናፊዎች 1ኛ: " + name1 + " 2ኛ: " + name2;
         }
 
-        // ውጤቱን ለጥቂት ጊዜ አሳይተን ለቀጣይ ዝግጁ መሆን
         setTimeout(() => {
             isResetting = true;
-            // የመጀመሪያው ተጫዋች ብቻ ዳታቤዙን እንዲያጸዳ
             const sortedKeys = Object.keys(selections).sort((a,b) => a-b);
-            if (selections[sortedKeys[0]] === userName) {
-                gameRef.set(null);
-                resultRef.set(null);
-            }
-            round++; 
-            document.getElementById('round-val').innerText = round;
+            if (selections[sortedKeys[0]] === userName) { gameRef.set(null); resultRef.set(null); }
+            round++; document.getElementById('round-val').innerText = round;
             isPlaying = false;
         }, 8000);
     }
@@ -241,14 +225,8 @@
         for(let i=1; i<=30; i++) {
             const cell = document.getElementById(`c-${i}`);
             let occ = selections[i] || "";
-            if(!isPlaying) {
-                // እጣ እየወጣ ካልሆነ ብቻ ቀለሙን ቀይር
-                cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
-            }
-            if (occ !== "") {
-                table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`;
-                count++;
-            }
+            if(!isPlaying) cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
+            if (occ !== "") { table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; count++; }
         }
         if(!isPlaying) document.getElementById('msg-box').innerText = "የተመረጡ ቁጥሮች: " + count + "/30";
     }
