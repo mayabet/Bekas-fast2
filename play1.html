@@ -13,29 +13,29 @@
         .yellow-banner { background: #002d4b; padding: 15px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #ff8c00; color: white; }
         .game-title { font-weight: 1000; font-size: 20px; }
         
-        /* 1. Date & Time - Orange & Language Adaptive */
-        .info-section { padding: 10px 15px; color: #ff8c00; font-weight: 1000; font-size: 16px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
+        /* 1. Date & Time - Bright OrangeRed */
+        .info-section { padding: 10px 15px; color: #FF4500; font-weight: 1000; font-size: 16px; display: flex; justify-content: space-between; background: #f0f0f0; border-bottom: 2px solid #ccc; }
         
         .balance-bar { background: #002d4b; color: #fff; padding: 14px; display: flex; justify-content: space-between; font-weight: 1000; font-size: 22px; }
         .instruction { color: #00b050; font-weight: 1000; text-align: center; padding: 12px 0; font-size: 18px; }
         
         .number-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; margin: 0 5px; }
-        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.3s; position: relative; perspective: 1000px; }
+        .num-cell { border: 3px solid #002d4b; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 1000; color: #002d4b; cursor: pointer; border-radius: 8px; transition: 0.3s; }
         
         .user-selected { background: #002d4b !important; color: #fff !important; border-color: #ff8c00 !important; }
         .taken-cell { background: #dcdcdc !important; color: #888 !important; cursor: not-allowed; border-color: #bbb !important; }
 
-        /* Animation */
-        .anim-flip { animation: pulse 0.3s infinite; background: #ff4757 !important; color: white !important; }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        /* New Animation: Bounce and Glow */
+        .anim-active { animation: bounceGlow 0.3s ease-in-out; background: #ff4757 !important; color: white !important; }
+        @keyframes bounceGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0px #ff4757; }
+            50% { transform: scale(1.2); box-shadow: 0 0 20px #ff4757; }
+            100% { transform: scale(1); box-shadow: 0 0 5px #ff4757; }
         }
 
-        /* 2. Winner Colors */
-        .winner-1 { background: #FFD700 !important; color: #000 !important; border-color: #002d4b !important; box-shadow: 0 0 15px #FFD700; transform: scale(1.1); z-index: 10; }
-        .winner-2 { background: #00b050 !important; color: #fff !important; border-color: #002d4b !important; box-shadow: 0 0 15px #00b050; transform: scale(1.1); z-index: 10; }
+        /* Temporary Winner Style for Grid (3s only) */
+        .win1-grid { background: #FFD700 !important; color: #000 !important; transform: scale(1.1); transition: 0.5s; }
+        .win2-grid { background: #00b050 !important; color: #fff !important; transform: scale(1.1); transition: 0.5s; }
         
         .stats-area { padding: 10px; }
         .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
@@ -48,6 +48,7 @@
         .list-container { margin: 10px; border: 3px solid #002d4b; border-radius: 10px; overflow: hidden; }
         .list-header { background: #002d4b; color: white; text-align: center; font-weight: 1000; padding: 10px; }
         .scroll-area { height: 160px; overflow-y: auto; background: #fff; } 
+        .no-data { text-align: center; padding: 20px; color: #999; font-weight: bold; }
         .selected-list td { border-bottom: 1.5px solid #eee; height: 40px; padding: 0 12px; font-weight: 1000; }
         .id-col { width: 50px; border-right: 3px solid #002d4b; text-align: center; background: #f1f1f1; }
 
@@ -94,7 +95,7 @@
     </div>
     <div class="list-container">
         <div class="list-header" id="sh">የተመረጡ ቁጥሮች ዝርዝር</div>
-        <div class="scroll-area">
+        <div class="scroll-area" id="list-scroll">
             <table class="selected-list" id="sel-table" style="width: 100%; border-collapse: collapse;"></table>
         </div>
     </div>
@@ -130,8 +131,8 @@
     let userName = "", balance = 0, currentLang = 'am', selections = {}, isPlaying = false, isResetting = false, round = 1;
 
     const trans = {
-        'am': {gt:'50 ብር | 1ኛ: 1200 | 2ኛ: 200', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር', months: ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"]},
-        'en': {gt:'50 ETB | 1st: 1200 | 2nd: 200', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.', months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]}
+        'am': {gt:'50 ብር | 1ኛ: 1200 | 2ኛ: 200', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር', empty:'ቁጥር አልተመረጠም', months: ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"]},
+        'en': {gt:'50 ETB | 1st: 1200 | 2nd: 200', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.', empty:'No numbers selected', months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]}
     };
 
     if (!userPhone) window.location.replace("index.html");
@@ -151,7 +152,9 @@
         selections = snapshot.val() || {};
         if (Object.keys(selections).length === 0) { 
             isResetting = false; 
-            if(!isPlaying) resetGridDisplayOnly(); 
+            if(!isPlaying) {
+                 document.querySelectorAll('.num-cell').forEach(c => c.className = 'num-cell');
+            }
         }
         updateUI();
     });
@@ -160,16 +163,9 @@
         const data = snap.val();
         if (data && data.status === "START_ANIMATION" && !isPlaying) { 
             isPlaying = true; 
-            runFlipAnimation(data.win1, data.win2); 
+            runBounceAnimation(data.win1, data.win2); 
         }
     });
-
-    function resetGridDisplayOnly() {
-        for(let i=1; i<=30; i++) {
-            const cell = document.getElementById(`c-${i}`);
-            cell.className = "num-cell";
-        }
-    }
 
     function pick(i) {
         if (isPlaying || isResetting) return;
@@ -190,15 +186,15 @@
         });
     }
 
-    function runFlipAnimation(w1, w2) {
+    function runBounceAnimation(w1, w2) {
         let duration = 4000; let startTime = Date.now();
         let msg = document.getElementById('msg-box');
         msg.innerText = currentLang === 'am' ? "እጣ እየወጣ ነው..." : "Drawing...";
         
         let interval = setInterval(() => {
-            document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-flip'));
+            document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
             let rand = Math.floor(Math.random() * 30) + 1;
-            document.getElementById(`c-${rand}`).classList.add('anim-flip');
+            document.getElementById(`c-${rand}`).classList.add('anim-active');
 
             if (Date.now() - startTime > duration) {
                 clearInterval(interval);
@@ -208,32 +204,38 @@
     }
 
     function showWinner(w1, w2) {
-        document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-flip'));
+        document.querySelectorAll('.num-cell').forEach(c => c.classList.remove('anim-active'));
         
-        // 1st Winner Gold, 2nd Winner Green
-        document.getElementById(`c-${w1}`).className = "num-cell winner-1";
-        document.getElementById(`c-${w2}`).className = "num-cell winner-2";
-        
-        // Update stats but keep them visible
+        // Show winners on grid for 3 seconds only
+        const c1 = document.getElementById(`c-${w1}`);
+        const c2 = document.getElementById(`c-${w2}`);
+        c1.classList.add('win1-grid');
+        c2.classList.add('win2-grid');
+
+        // Permanent stats display until next round reset
         document.getElementById('win1-val').innerText = w1;
         document.getElementById('win2-val').innerText = w2;
+
+        setTimeout(() => {
+            c1.classList.remove('win1-grid');
+            c2.classList.remove('win2-grid');
+        }, 3000);
 
         let name1 = selections[w1] || "Player";
         let name2 = selections[w2] || "Player";
 
         if (name1 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 1200 });
-            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 1ኛ አሸንፈዋል!" : "CONGRATS! 1st WINNER!";
+            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 1ኛ አሸንፈዋል!" : "1st WINNER!";
         } else if (name2 === userName) {
             database.ref('users/' + userPhone).update({ balance: balance + 200 });
-            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 2ኛ አሸንፈዋል!" : "CONGRATS! 2nd WINNER!";
+            document.getElementById('msg-box').innerText = currentLang === 'am' ? "እንኳን ደስ አለዎት! 2ኛ አሸንፈዋል!" : "2nd WINNER!";
         } else {
             document.getElementById('msg-box').innerText = (currentLang === 'am' ? "አሸናፊዎች 1ኛ: " : "Winners 1st: ") + name1 + " 2ኛ: " + name2;
         }
 
         setTimeout(() => {
             isResetting = true;
-            // Only the first player resets the game
             const sortedKeys = Object.keys(selections).sort((a,b) => a-b);
             if (selections[sortedKeys[0]] === userName) { 
                 gameRef.set(null); 
@@ -242,23 +244,37 @@
             round++; 
             document.getElementById('round-val').innerText = round;
             isPlaying = false;
-        }, 12000); // 12 seconds display before next round starts
+        }, 10000); 
     }
 
     function updateUI() {
-        const table = document.getElementById('sel-table'); table.innerHTML = "";
+        const table = document.getElementById('sel-table');
+        const scrollArea = document.getElementById('list-scroll');
+        table.innerHTML = "";
         let count = 0;
+        
         for(let i=1; i<=30; i++) {
             const cell = document.getElementById(`c-${i}`);
             let occ = selections[i] || "";
-            if(!isPlaying && !isResetting) {
+            if(!isPlaying) {
                 cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
             }
-            if (occ !== "") { table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; count++; }
+            if (occ !== "") { 
+                table.innerHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; 
+                count++; 
+            }
         }
+
+        if (count === 0) {
+            scrollArea.innerHTML = `<div class="no-data">${trans[currentLang].empty}</div>`;
+        } else if (scrollArea.querySelector('.no-data')) {
+            scrollArea.innerHTML = `<table class="selected-list" id="sel-table" style="width: 100%; border-collapse: collapse;"></table>`;
+            updateUI(); // Re-run to fill the table
+            return;
+        }
+
         if(!isPlaying) {
-            let label = currentLang === 'am' ? "የተመረጡ ቁጥሮች: " : "Selected: ";
-            document.getElementById('msg-box').innerText = label + count + "/30";
+            document.getElementById('msg-box').innerText = (currentLang === 'am' ? "የተመረጡ ቁጥሮች: " : "Selected: ") + count + "/30";
         }
     }
 
@@ -273,17 +289,11 @@
 
     function updateDateTime() {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-        document.getElementById('time-label').innerText = timeStr;
-
+        document.getElementById('time-label').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
         if (currentLang === 'am') {
-            const day = now.getDate();
-            const month = trans['am'].months[now.getMonth()];
-            const year = now.getFullYear();
-            document.getElementById('date-label').innerText = `${month} ${day}, ${year}`;
+            document.getElementById('date-label').innerText = `${trans['am'].months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
         } else {
-            const dateStr = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-            document.getElementById('date-label').innerText = dateStr;
+            document.getElementById('date-label').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
         }
     }
 
