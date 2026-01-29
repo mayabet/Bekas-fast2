@@ -161,21 +161,24 @@
     }
 
     function pick(n) {
-        if(isPlaying || isResetting) return;
-
-        // መምረጥ ወይስ ማጥፋት?
-        if (selections[n] === userName) {
-            // ተጠቃሚው የራሱን ቁጥር ሲነካው እንዲጠፋ (Cancel)
-            gameRef.child(n).remove();
-            database.ref('users/' + userPhone).update({ balance: balance + 50 });
+        // 1. መጀመሪያ ማጥፋት (Cancel) ከፈለገ - ጨዋታው ካልጀመረ ብቻ
+        if (selections[n] === userName && !isPlaying) {
+            gameRef.child(n).remove().then(() => {
+                database.ref('users/' + userPhone).update({ balance: balance + 50 });
+            });
             return;
         }
 
-        if (selections[n]) return; // በሌላ ሰው ከተያዘ ምንም አያድርግ
+        // 2. ጨዋታው ከጀመረ ወይም ቁጥሩ በሌላ ሰው ከተያዘ እንዳይነካ መከልከል
+        if(isPlaying || isResetting || selections[n]) return;
 
-        if (balance < 50) { document.getElementById('msg-box').innerText = trans[currentLang].low; return; }
+        // 3. አዲስ ቁጥር ለመያዝ የሂሳብ መጠን ማረጋገጥ
+        if (balance < 50) { 
+            document.getElementById('msg-box').innerText = trans[currentLang].low; 
+            return; 
+        }
         
-        // ቁጥር መያዝ
+        // 4. ቁጥሩን መያዝ
         database.ref('users/' + userPhone).update({ balance: balance - 50 });
         gameRef.child(n).set(userName).then(() => {
             gameRef.once('value', (snap) => {
@@ -232,7 +235,6 @@
         setTimeout(() => {
             isResetting = true;
             const keys = Object.keys(selections).sort((a,b) => a-b);
-            // ዳታውን የሚያጸዳው የመጀመሪያውን ቁጥር የያዘው ሰው ነው
             if (selections[keys[0]] === userName) { gameRef.set(null); resultRef.set(null); }
             document.getElementById('round-val').innerText = ++round;
             document.getElementById('win1-val').innerText = "-";
