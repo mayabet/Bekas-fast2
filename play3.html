@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Play 3</title>
+    <title>Mita Betting - Play 3</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
@@ -104,10 +104,11 @@
     const userPhone = localStorage.getItem('userPhone');
     let userName = "", balance = 0, currentLang = 'am', selections = {}, isPlaying = false, isResetting = false, round = 1;
     let pickTimestamps = {}; 
+    let historyData = [];
 
     const trans = {
-        'am': {gt:'200 ብር | 1ኛ: 5200 | 2ኛ: 500', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር', empty:'እባክዎ ቁጥር ይምረጡ', months: ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"]},
-        'en': {gt:'200 ETB | 1st: 5200 | 2nd: 500', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED LIST', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.', empty:'Please select a number', months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]}
+        'am': {gt:'200 ብር | 1ኛ: 5200 | 2ኛ: 500', bl:'ቀሪ ሂሳብ', ins:'ከ 1 እስከ 30 ያለውን ቁጥር ይምረጡ', sh:'የተመረጡ ቁጥሮች ዝርዝር', hist: 'የአሸናፊዎች ታሪክ', bb:'ተመለስ', ll:'ቋንቋ', txt_round:'ዙር', txt_w1:'1ኛ ቁጥር', txt_w2:'2ኛ ቁጥር', empty:'እባክዎ ቁጥር ይምረጡ', months: ["ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "መስከረም", "ጥቅምት", "ህዳር", "ታህሳስ"]},
+        'en': {gt:'200 ETB | 1st: 5200 | 2nd: 500', bl:'BALANCE', ins:'SELECT NUMBER 1-30', sh:'SELECTED LIST', hist: 'WINNERS HISTORY', bb:'BACK', ll:'LANGUAGE', txt_round:'ROUND', txt_w1:'1st No.', txt_w2:'2nd No.', empty:'Please select a number', months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]}
     };
 
     if (!userPhone) window.location.replace("index.html");
@@ -145,7 +146,7 @@
         if (selections[i] === userName) {
             let now = Date.now();
             if (pickTimestamps[i] && (now - pickTimestamps[i]) > 30000) {
-                msgBox.innerText = currentLang === 'am' ? "ቁጥር ለመቀየር የ30 ሰከንድ ጊዜ አልፎበታል" : "30 seconds time limit passed to change";
+                msgBox.innerText = currentLang === 'am' ? "ቁጥር ለመቀየር የ30 ሰከንድ ጊዜ አልፎበታል" : "30 seconds limit passed";
                 return;
             }
             gameRef.child(i).remove().then(() => { 
@@ -156,7 +157,7 @@
         }
 
         if (selections[i]) { msgBox.innerText = currentLang === 'am' ? "ይህ ቁጥር ተይዟል" : "Taken"; return; }
-        if (balance < 200) { msgBox.innerText = currentLang === 'am' ? "የመረጡት ቁጥር እንዲያዝ ብቂ ሂሳብ የሎትም" : "Low Balance"; return; }
+        if (balance < 200) { msgBox.innerText = currentLang === 'am' ? "በቂ ሂሳብ የሎትም" : "Low Balance"; return; }
 
         pickTimestamps[i] = Date.now();
         database.ref('users/' + userPhone).update({ balance: balance - 200 });
@@ -191,17 +192,22 @@
         let name1 = selections[w1] || "Player";
         let name2 = selections[w2] || "Player";
 
+        historyData.unshift({ r: round, n: name1, num: w1, rank: "1ኛ" });
+        historyData.unshift({ r: round, n: name2, num: w2, rank: "2ኛ" });
+        if (historyData.length > 5) historyData = historyData.slice(0, 5);
+
+        document.getElementById('sh').innerText = trans[currentLang].hist;
         const scrollArea = document.getElementById('list-scroll');
-        scrollArea.innerHTML = `
-            <table class="selected-list" style="width: 100%; border-collapse: collapse;">
-                <tr style="background:#FFD700; color:#000;"><td class="id-col">${w1}</td><td>1ኛ አሸናፊ: ${name1}</td></tr>
-                <tr style="background:#00b050; color:#fff;"><td class="id-col">${w2}</td><td>2ኛ አሸናፊ: ${name2}</td></tr>
-            </table>`;
+        let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
+        historyData.forEach(h => {
+            let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
+            historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+        });
+        historyHTML += `</table>`;
+        scrollArea.innerHTML = historyHTML;
 
         if (name1 === userName) database.ref('users/' + userPhone).update({ balance: balance + 5200 });
         else if (name2 === userName) database.ref('users/' + userPhone).update({ balance: balance + 500 });
-
-        document.getElementById('msg-box').innerText = (currentLang === 'am' ? "ዙር ተጠናቋል!" : "Round Finished!");
 
         setTimeout(() => {
             document.querySelectorAll('.num-cell').forEach(c => c.className = 'num-cell');
@@ -222,16 +228,32 @@
         const scrollArea = document.getElementById('list-scroll');
         if (isPlaying) return; 
 
-        let tableHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
-        let count = 0;
-        for(let i=1; i<=30; i++) {
-            const cell = document.getElementById(`c-${i}`);
-            let occ = selections[i] || "";
-            cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
-            if (occ !== "") { tableHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; count++; }
+        let count = Object.keys(selections).length;
+        if (count > 0) {
+            document.getElementById('sh').innerText = trans[currentLang].sh;
+            let tableHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
+            for(let i=1; i<=30; i++) {
+                const cell = document.getElementById(`c-${i}`);
+                let occ = selections[i] || "";
+                cell.className = occ === userName ? "num-cell user-selected" : (occ !== "" ? "num-cell taken-cell" : "num-cell");
+                if (occ !== "") { tableHTML += `<tr><td class="id-col">${i}</td><td>${occ}</td></tr>`; }
+            }
+            tableHTML += `</table>`;
+            scrollArea.innerHTML = tableHTML;
+        } else {
+            if (historyData.length > 0) {
+                document.getElementById('sh').innerText = trans[currentLang].hist;
+                let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
+                historyData.forEach(h => {
+                    let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
+                    historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+                });
+                historyHTML += `</table>`;
+                scrollArea.innerHTML = historyHTML;
+            } else {
+                scrollArea.innerHTML = `<div class="no-data">${trans[currentLang].empty}</div>`;
+            }
         }
-        tableHTML += `</table>`;
-        scrollArea.innerHTML = count === 0 ? `<div class="no-data">${trans[currentLang].empty}</div>` : tableHTML;
         document.getElementById('msg-box').innerText = (currentLang === 'am' ? "ተመራጭ: " : "Picked: ") + count + "/30";
     }
 
