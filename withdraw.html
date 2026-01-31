@@ -11,71 +11,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+Ethiopic:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            background: #eef2f7; 
-            font-family: 'Noto Sans Ethiopic', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #eef2f7; font-family: 'Noto Sans Ethiopic', sans-serif; display: flex; justify-content: center; align-items: center; }
         .en-mode { font-family: 'Poppins', sans-serif !important; }
-
-        .app-card { 
-            width: 92%; 
-            max-width: 360px; 
-            background: white; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,45,75,0.25); 
-            overflow: hidden; 
-            border: 4px solid #002d4b; 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        .top-bar { 
-            background: #002d4b; 
-            padding: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            color: #fff; 
-            border-bottom: 4px solid #ff8c00; 
-        }
+        .app-card { width: 92%; max-width: 360px; background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,45,75,0.25); overflow: hidden; border: 4px solid #002d4b; display: flex; flex-direction: column; }
+        .top-bar { background: #002d4b; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #fff; border-bottom: 4px solid #ff8c00; }
         .title { font-weight: 1000; font-size: 19px; }
-
-        .balance-section { 
-            background: #002d4b; 
-            padding: 20px 15px; 
-            text-align: center; 
-            color: white;
-            border-bottom: 2px solid #ff8c00;
-        }
+        .balance-section { background: #002d4b; padding: 20px 15px; text-align: center; color: white; border-bottom: 2px solid #ff8c00; }
         .bal-label { font-size: 15px; font-weight: 1000; color: #ff8c00; margin-bottom: 8px; text-transform: uppercase; }
         .bal-amount { font-size: 36px; font-weight: 1000; color: #fff; }
-
         .content { padding: 20px; }
-        
         .instr { font-size: 14px; font-weight: 1000; color: #002d4b; margin-bottom: 15px; line-height: 1.4; text-align: center; }
         .input-group { margin-bottom: 18px; }
         label { display: block; font-size: 13px; font-weight: 1000; color: #002d4b; margin-bottom: 8px; text-transform: uppercase; }
-        
         .input-box { border: 3px solid #002d4b; border-radius: 10px; padding: 10px; display: flex; align-items: center; background: #fff; height: 42px; }
         .input-box i { color: #002d4b; margin-right: 12px; font-size: 20px; width: 22px; text-align: center; }
         input { border: none; outline: none; width: 100%; font-size: 20px; font-weight: 1000; color: #002d4b; font-family: inherit; }
-        input::placeholder { font-weight: 1000; opacity: 0.6; }
-
         #msg-box { text-align: center; font-weight: 1000; font-size: 15px; margin-bottom: 12px; min-height: 20px; }
-        
         .btn { width: 100%; height: 50px; border-radius: 12px; border: none; font-weight: 1000; cursor: pointer; font-size: 17px; text-transform: uppercase; font-family: inherit; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
         .withdraw-btn { background: #ff8c00; color: white; }
         .back-btn { background: #002d4b; color: white; }
-        
         .notice { font-size: 13px; font-weight: 1000; color: #d00000; text-align: center; margin-top: 10px; line-height: 1.4; }
-
         .footer { border-top: 3px solid #002d4b; padding: 15px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 1000; background: #f9f9f9; }
         .lang-btn { cursor: pointer; color: #002d4b; }
         .lang-btn.active { color: #ff8c00; }
@@ -102,14 +57,14 @@
             <label id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
             <div class="input-box">
                 <i class="fas fa-money-bill-wave"></i>
-                <input type="number" id="withdraw-amount" placeholder="0.00" oninput="this.value = this.value.slice(0, 5);">
+                <input type="number" id="withdraw-amount" placeholder="0" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);">
             </div>
         </div>
 
         <button class="btn withdraw-btn" onclick="handleWithdraw()" id="btn-submit">ብር አውጣ</button>
         <a href="home.html" class="btn back-btn" id="btn-home">ተመለስ</a>
         
-        <div class="notice" id="bottom-notice">የጠየቁት ገንዘብ በ 10 ደቂቃ ውስጥ አካውንትዎ ላይ ገቢ ይሆናል።</div>
+        <div class="notice" id="bottom-notice">የጠየቁት ገንዘብ Admin ሲያጸድቀው ገቢ ይሆናል።</div>
     </div>
 
     <div class="footer">
@@ -122,7 +77,6 @@
 </div>
 
 <script>
-    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -133,7 +87,6 @@
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
-    // Initialize Firebase
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -141,18 +94,14 @@
     let currentBalance = 0;
     let currentLang = 'am';
 
-    // Check if user is logged in
     if (!userPhone) { 
         window.location.replace("index.html"); 
     } else {
-        // Fetch balance from Database
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 currentBalance = data.balance || 0;
                 document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
-            } else {
-                document.getElementById('user-balance').innerText = "0";
             }
         });
     }
@@ -166,42 +115,40 @@
 
     function handleWithdraw() {
         const amountInput = document.getElementById('withdraw-amount');
-        const amount = parseInt(amountInput.value);
+        const val = amountInput.value.trim();
+        const amount = parseInt(val);
 
-        // Validation
-        if (!amount || amount <= 0) {
+        if (!val || isNaN(amount) || amount <= 0) {
             showMsg(currentLang === 'am' ? "እባክዎ ትክክለኛ መጠን ያስገቡ" : "ENTER VALID AMOUNT", "red");
             return;
         }
-        if (amount > currentBalance) {
-            showMsg(currentLang === 'am' ? "በቂ ቀሪ ሂሳብ የለዎትም" : "INSUFFICIENT BALANCE", "red");
+
+        if (val.length > 5) {
+            showMsg(currentLang === 'am' ? "ቢበዛ 5 ዲጂት ብቻ!" : "MAX 5 DIGITS ONLY!", "red");
             return;
         }
+
         if (amount % 10 !== 0) {
             showMsg(currentLang === 'am' ? "የ10 እጥፍ መጠን ያስገቡ (10, 20...)" : "USE MULTIPLES OF 10", "red");
             return;
         }
 
-        // Deduct balance and send request
-        database.ref('users/' + userPhone + '/balance').transaction(c => {
-            if (c >= amount) return c - amount;
-            return; // In case of race condition
-        }).then((result) => {
-            if(result.committed) {
-                database.ref('withdraw_requests').push({
-                    phone: userPhone,
-                    amount: amount,
-                    status: "pending",
-                    time: new Date().toLocaleString()
-                }).then(() => {
-                    showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ይላክልዎታል" : "REQUEST SENT! SUCCESS", "#2e7d32");
-                    amountInput.value = "";
-                });
-            } else {
-                showMsg(currentLang === 'am' ? "ስህተት፡ በቂ ሂሳብ የለዎትም" : "ERROR: INSUFFICIENT BALANCE", "red");
-            }
-        }).catch(err => {
-            showMsg("ስህተት ተፈጥሯል፣ ይሞክሩ", "red");
+        if (amount > currentBalance) {
+            showMsg(currentLang === 'am' ? "በቂ ቀሪ ሂሳብ የለዎትም" : "INSUFFICIENT BALANCE", "red");
+            return;
+        }
+
+        // ባላንስ ሳይቀነስ ጥያቄውን መላክ
+        database.ref('withdraw_requests').push({
+            phone: userPhone,
+            amount: amount,
+            status: "pending",
+            time: new Date().toLocaleString()
+        }).then(() => {
+            showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! Admin ሲያጸድቀው ይላክልዎታል" : "SENT! PENDING APPROVAL", "#2e7d32");
+            amountInput.value = "";
+        }).catch(() => {
+            showMsg("Error! Try again", "red");
         });
     }
 
@@ -216,8 +163,8 @@
         document.getElementById('btn-submit').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
         document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
         document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
-        document.getElementById('txt-instr').innerText = isEn ? "Enter the amount you want to withdraw below." : "ማውጣት የሚፈልጉትን የገንዘብ መጠን ከታች ያስገቡ።";
-        document.getElementById('bottom-notice').innerText = isEn ? "Withdrawal will be processed within 10 minutes." : "የጠየቁት ገንዘብ በ 10 ደቂቃ ውስጥ አካውንትዎ ላይ ገቢ ይሆናል።";
+        document.getElementById('txt-instr').innerText = isEn ? "Enter amount (multiples of 10)" : "ማውጣት የሚፈልጉትን የገንዘብ መጠን (የ10 እጥፍ) ያስገቡ።";
+        document.getElementById('bottom-notice').innerText = isEn ? "Pending Admin Approval." : "የጠየቁት ገንዘብ Admin ሲያጸድቀው ገቢ ይሆናል።";
         document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
         document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
     }
