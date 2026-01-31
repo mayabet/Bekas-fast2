@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Withdraw</title>
+    <title>Mita Betting - Withdraw</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -51,13 +51,13 @@
 
     <div class="content">
         <div id="msg-box"></div>
-        <div class="instr" id="txt-instr">ማውጣት የሚፈልጉትን የገንዘብ መጠን ከታች ያስገቡ።</div>
+        <div class="instr" id="txt-instr">ማውጣት የሚፈልጉትን የገንዘብ መጠን ያስገቡ።</div>
 
         <div class="input-group">
             <label id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
             <div class="input-box">
                 <i class="fas fa-money-bill-wave"></i>
-                <input type="number" id="withdraw-amount" placeholder="0" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);">
+                <input type="number" id="withdraw-amount" placeholder="00000" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);">
             </div>
         </div>
 
@@ -80,7 +80,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://bekas-fast2-default-rtdb.firebaseio.com",
+        databaseURL: "https://mita-bet-default-rtdb.firebaseio.com", 
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -102,6 +102,8 @@
             if (data) {
                 currentBalance = data.balance || 0;
                 document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
+            } else {
+                document.getElementById('user-balance').innerText = "0";
             }
         });
     }
@@ -123,13 +125,9 @@
             return;
         }
 
+        // ቢበዛ 5 ዲጂት መሆኑን ማረጋገጫ
         if (val.length > 5) {
-            showMsg(currentLang === 'am' ? "ቢበዛ 5 ዲጂት ብቻ!" : "MAX 5 DIGITS ONLY!", "red");
-            return;
-        }
-
-        if (amount % 10 !== 0) {
-            showMsg(currentLang === 'am' ? "የ10 እጥፍ መጠን ያስገቡ (10, 20...)" : "USE MULTIPLES OF 10", "red");
+            showMsg(currentLang === 'am' ? "ከ 5 ዲጂት መብለጥ አይችልም" : "MAX 5 DIGITS ONLY", "red");
             return;
         }
 
@@ -138,7 +136,6 @@
             return;
         }
 
-        // ባላንስ ሳይቀነስ ጥያቄውን መላክ
         database.ref('withdraw_requests').push({
             phone: userPhone,
             amount: amount,
@@ -147,7 +144,7 @@
         }).then(() => {
             showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! Admin ሲያጸድቀው ይላክልዎታል" : "SENT! PENDING APPROVAL", "#2e7d32");
             amountInput.value = "";
-        }).catch(() => {
+        }).catch((err) => {
             showMsg("Error! Try again", "red");
         });
     }
@@ -163,7 +160,7 @@
         document.getElementById('btn-submit').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
         document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
         document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
-        document.getElementById('txt-instr').innerText = isEn ? "Enter amount (multiples of 10)" : "ማውጣት የሚፈልጉትን የገንዘብ መጠን (የ10 እጥፍ) ያስገቡ።";
+        document.getElementById('txt-instr').innerText = isEn ? "Enter amount to withdraw." : "ማውጣት የሚፈልጉትን የገንዘብ መጠን ያስገቡ።";
         document.getElementById('bottom-notice').innerText = isEn ? "Pending Admin Approval." : "የጠየቁት ገንዘብ Admin ሲያጸድቀው ገቢ ይሆናል።";
         document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
         document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
