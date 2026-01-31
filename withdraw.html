@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Withdraw</title>
+    <title>Mita Betting - Withdraw</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -54,10 +54,10 @@
         <div class="instr" id="txt-instr">ማውጣት የሚፈልጉትን የገንዘብ መጠን ያስገቡ።</div>
 
         <div class="input-group">
-            <label id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
+            <label id="lbl-amt">የገንዘብ መጠን (የ 10 ብዜት ብቻ)</label>
             <div class="input-box">
                 <i class="fas fa-money-bill-wave"></i>
-                <input type="number" id="withdraw-amount" placeholder="00000" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);">
+                <input type="number" id="withdraw-amount" placeholder="00" oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);">
             </div>
         </div>
 
@@ -80,7 +80,6 @@
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        // እዚህ ጋር ትክክለኛው Database URL ተተክቷል
         databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/", 
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
@@ -129,8 +128,14 @@
             return;
         }
 
+        // የ 5 ዲጂት እና የ 10 ብዜት ቁጥጥር
         if (val.length > 5) {
             showMsg(currentLang === 'am' ? "ከ 5 ዲጂት መብለጥ አይችልም" : "MAX 5 DIGITS ONLY", "red");
+            return;
+        }
+
+        if (amount % 10 !== 0) {
+            showMsg(currentLang === 'am' ? "እባክዎ የ 10 ብዜት ያስገቡ (ለምሳሌ 50, 100)" : "ENTER MULTIPLES OF 10 ONLY", "red");
             return;
         }
 
@@ -160,11 +165,11 @@
         document.getElementById('title-name').innerText = isEn ? "WITHDRAW" : "ብር ማውጫ";
         document.getElementById('txt-bal-label').innerText = isEn ? "YOUR BALANCE" : "ያለዎት ቀሪ ሂሳብ";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
-        document.getElementById('lbl-amt').innerText = isEn ? "AMOUNT (MAX 5 DIGITS)" : "የገንዘብ መጠን (ቢበዛ 5 ዲጂት)";
+        document.getElementById('lbl-amt').innerText = isEn ? "AMOUNT (MULTIPLES OF 10)" : "የገንዘብ መጠን (የ 10 ብዜት ብቻ)";
         document.getElementById('btn-submit').innerText = isEn ? "WITHDRAW" : "ብር አውጣ";
         document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
         document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
-        document.getElementById('txt-instr').innerText = isEn ? "Enter amount to withdraw." : "ማውጣት የሚፈልጉትን የገንዘብ መጠን ያስገቡ።";
+        document.getElementById('txt-instr').innerText = isEn ? "Enter amount (Multiples of 10)." : "ማውጣት የሚፈልጉትን የገንዘብ መጠን ያስገቡ።";
         document.getElementById('bottom-notice').innerText = isEn ? "Money will be credited within 10 minutes." : "የጠየቁት ገንዘብ በ 10 ደቂቃ ባልሞላ ጊዜ ውስጥ ገቢ ይሆናል።";
         document.getElementById('lang-am').className = isEn ? 'lang-btn' : 'lang-btn active';
         document.getElementById('lang-en').className = isEn ? 'lang-btn active' : 'lang-btn';
