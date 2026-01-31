@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw withdraw - Withdraw</title>
+    <title>Mita Betting - Withdraw</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -70,9 +70,9 @@
 
         #msg-box { text-align: center; font-weight: 1000; font-size: 15px; margin-bottom: 12px; min-height: 20px; }
         
-        .btn { width: 100%; height: 50px; border-radius: 12px; border: none; font-weight: 1000; cursor: pointer; font-size: 17px; text-transform: uppercase; font-family: inherit; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+        .btn { width: 100%; height: 50px; border-radius: 12px; border: none; font-weight: 1000; cursor: pointer; font-size: 17px; text-transform: uppercase; font-family: inherit; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
         .withdraw-btn { background: #ff8c00; color: white; }
-        .back-btn { background: #002d4b; color: white; text-decoration: none; }
+        .back-btn { background: #002d4b; color: white; }
         
         .notice { font-size: 13px; font-weight: 1000; color: #d00000; text-align: center; margin-top: 10px; line-height: 1.4; }
 
@@ -122,6 +122,7 @@
 </div>
 
 <script>
+    // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
@@ -132,6 +133,7 @@
         appId: "1:267970590270:web:dd4adbda56d4e27aaf036f"
     };
 
+    // Initialize Firebase
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -139,10 +141,11 @@
     let currentBalance = 0;
     let currentLang = 'am';
 
+    // Check if user is logged in
     if (!userPhone) { 
         window.location.replace("index.html"); 
     } else {
-        // ባላንሱን ከዳታቤዝ የመጥራት ስራ
+        // Fetch balance from Database
         database.ref('users/' + userPhone).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -165,6 +168,7 @@
         const amountInput = document.getElementById('withdraw-amount');
         const amount = parseInt(amountInput.value);
 
+        // Validation
         if (!amount || amount <= 0) {
             showMsg(currentLang === 'am' ? "እባክዎ ትክክለኛ መጠን ያስገቡ" : "ENTER VALID AMOUNT", "red");
             return;
@@ -178,17 +182,24 @@
             return;
         }
 
-        // ገንዘቡን ቀንሶ ለጥያቄ መላክ
-        database.ref('users/' + userPhone + '/balance').transaction(c => (c || 0) - amount).then(() => {
-            database.ref('withdraw_requests').push({
-                phone: userPhone,
-                amount: amount,
-                status: "pending",
-                time: new Date().toLocaleString()
-            }).then(() => {
-                showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ይላክልዎታል" : "REQUEST SENT! SUCCESS", "#2e7d32");
-                amountInput.value = "";
-            });
+        // Deduct balance and send request
+        database.ref('users/' + userPhone + '/balance').transaction(c => {
+            if (c >= amount) return c - amount;
+            return; // In case of race condition
+        }).then((result) => {
+            if(result.committed) {
+                database.ref('withdraw_requests').push({
+                    phone: userPhone,
+                    amount: amount,
+                    status: "pending",
+                    time: new Date().toLocaleString()
+                }).then(() => {
+                    showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ይላክልዎታል" : "REQUEST SENT! SUCCESS", "#2e7d32");
+                    amountInput.value = "";
+                });
+            } else {
+                showMsg(currentLang === 'am' ? "ስህተት፡ በቂ ሂሳብ የለዎትም" : "ERROR: INSUFFICIENT BALANCE", "red");
+            }
         }).catch(err => {
             showMsg("ስህተት ተፈጥሯል፣ ይሞክሩ", "red");
         });
