@@ -77,11 +77,11 @@
 </div>
 
 <script>
-    // Firebase Configuration (የእርስዎ Firebase መረጃ)
     const firebaseConfig = {
         apiKey: "AIzaSyCOrYzcTRXTX50Aqhz4GoVjpptrmh4BKu0",
         authDomain: "bekas-fast2.firebaseapp.com",
-        databaseURL: "https://mita-bet-default-rtdb.firebaseio.com", 
+        // እዚህ ጋር ትክክለኛው Database URL ተተክቷል
+        databaseURL: "https://bekas-fast2-default-rtdb.europe-west1.firebasedatabase.app/", 
         projectId: "bekas-fast2",
         storageBucket: "bekas-fast2.firebasestorage.app",
         messagingSenderId: "267970590270",
@@ -95,7 +95,6 @@
     let currentBalance = 0;
     let currentLang = 'am';
 
-    // Balance በትክክል እንዲታይ የማድረግ ስራ
     if (!userPhone) { 
         window.location.replace("index.html"); 
     } else {
@@ -103,7 +102,6 @@
             const data = snapshot.val();
             if (data) {
                 currentBalance = data.balance || 0;
-                // ቁጥሩን በኮማ እንዲያሳይ (ለምሳሌ 1,000)
                 document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
             } else {
                 document.getElementById('user-balance').innerText = "0";
@@ -145,6 +143,7 @@
             phone: userPhone,
             amount: amount,
             status: "pending",
+            site: "Mita Betting",
             time: new Date().toLocaleString()
         }).then(() => {
             showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ገቢ ይሆናል" : "SENT! RECEIVED WITHIN 10 MINS", "#2e7d32");
