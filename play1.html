@@ -201,7 +201,8 @@
         let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
         historyData.forEach(h => {
             let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
-            historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+            // ማስተካከያ፡ ቅንፎችን በማጥፋት name እና ቁጥር ብቻ እንዲወጣ ተደርጓል
+            historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} ${h.num}</td></tr>`;
         });
         historyHTML += `</table>`;
         scrollArea.innerHTML = historyHTML;
@@ -246,7 +247,8 @@
                 let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
                 historyData.forEach(h => {
                     let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
-                    historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+                    // ማስተካከያ እዚህም ተደርጓል (UI update ሲያደርግ)
+                    historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} ${h.num}</td></tr>`;
                 });
                 historyHTML += `</table>`;
                 scrollArea.innerHTML = historyHTML;
