@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ቡናማው እጣ - Withdraw</title>
+    <title>Mita Betting - Withdraw</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -31,7 +31,7 @@
             border-radius: 20px; 
             box-shadow: 0 15px 35px rgba(0,45,75,0.25); 
             overflow: hidden; 
-            border: 4px solid #002d4b; /* ወፍራም ቦርደር */
+            border: 4px solid #002d4b; 
             display: flex; 
             flex-direction: column; 
         }
@@ -47,7 +47,6 @@
         }
         .title { font-weight: 1000; font-size: 19px; }
 
-        /* Balance Section - Solid Color (ልክ እንደ ጠየቅከው) */
         .balance-section { 
             background: #002d4b; 
             padding: 20px 15px; 
@@ -60,7 +59,6 @@
 
         .content { padding: 20px; }
         
-        /* ሁሉም ጽሁፎች Bold እንዲሆኑ */
         .instr { font-size: 14px; font-weight: 1000; color: #002d4b; margin-bottom: 15px; line-height: 1.4; text-align: center; }
         .input-group { margin-bottom: 18px; }
         label { display: block; font-size: 13px; font-weight: 1000; color: #002d4b; margin-bottom: 8px; text-transform: uppercase; }
@@ -93,7 +91,7 @@
 
     <div class="balance-section">
         <div class="bal-label" id="txt-bal-label">ያለዎት ቀሪ ሂሳብ</div>
-        <div class="bal-amount"><span id="user-balance">0.00</span> <small style="font-size:16px; color:#ff8c00;" id="txt-curr">ብር</small></div>
+        <div class="bal-amount"><span id="user-balance">...</span> <small style="font-size:16px; color:#ff8c00;" id="txt-curr">ብር</small></div>
     </div>
 
     <div class="content">
@@ -141,15 +139,20 @@
     let currentBalance = 0;
     let currentLang = 'am';
 
-    if (!userPhone) { window.location.replace("index.html"); }
-
-    database.ref('users/' + userPhone).on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            currentBalance = data.balance || 0;
-            document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
-        }
-    });
+    if (!userPhone) { 
+        window.location.replace("index.html"); 
+    } else {
+        // ባላንሱን ከዳታቤዝ የመጥራት ስራ
+        database.ref('users/' + userPhone).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                currentBalance = data.balance || 0;
+                document.getElementById('user-balance').innerText = currentBalance.toLocaleString();
+            } else {
+                document.getElementById('user-balance').innerText = "0";
+            }
+        });
+    }
 
     function showMsg(text, color) {
         const msgBox = document.getElementById('msg-box');
@@ -175,6 +178,7 @@
             return;
         }
 
+        // ገንዘቡን ቀንሶ ለጥያቄ መላክ
         database.ref('users/' + userPhone + '/balance').transaction(c => (c || 0) - amount).then(() => {
             database.ref('withdraw_requests').push({
                 phone: userPhone,
@@ -185,6 +189,8 @@
                 showMsg(currentLang === 'am' ? "ጥያቄው ተልኳል! በ 10 ደቂቃ ውስጥ ይላክልዎታል" : "REQUEST SENT! SUCCESS", "#2e7d32");
                 amountInput.value = "";
             });
+        }).catch(err => {
+            showMsg("ስህተት ተፈጥሯል፣ ይሞክሩ", "red");
         });
     }
 
