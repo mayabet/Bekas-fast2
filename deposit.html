@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Deposit</title>
+    <title>Mita Betting - Deposit</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
@@ -62,16 +62,16 @@
         <div id="msg-display"></div>
 
         <div class="input-group">
-            <label class="input-label" id="lbl-code">የትራንዛክሽን ኮድ (10 ዲጂት)</label>
+            <label class="input-label" id="lbl-code">የትራንዛክሽን ኮድ (10 ዲጂት ብቻ)</label>
             <div class="input-box">
                 <input type="text" id="tr-input" placeholder="A1B2C3D4E5" maxlength="10" autocomplete="off" style="text-transform: uppercase;">
             </div>
         </div>
 
         <div class="input-group">
-            <label class="input-label" id="lbl-amt">የገንዘብ መጠን (ቢበዛ 5 ዲጂት)</label>
+            <label class="input-label" id="lbl-amt">የገንዘብ መጠን (10 እና የ10 ብዜት)</label>
             <div class="input-box">
-                <input type="text" id="am-input" placeholder="0000" inputmode="numeric" maxlength="5" autocomplete="off">
+                <input type="text" id="am-input" placeholder="00000" inputmode="numeric" maxlength="5" autocomplete="off">
             </div>
         </div>
 
@@ -120,7 +120,6 @@
     const trInput = document.getElementById('tr-input');
     const amInput = document.getElementById('am-input');
 
-    // ኮዱ በትክክል 10 ዲጂት ብቻ እንዲሆን መቆጣጠሪያ
     trInput.oninput = function() {
         let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         if (val.length > 10) val = val.substring(0, 10);
@@ -144,17 +143,23 @@
 
     function handleDeposit() {
         const code = trInput.value.trim();
-        const amount = amInput.value.trim();
+        const amountStr = amInput.value.trim();
+        const amount = parseInt(amountStr);
 
-        // 1. የኮድ ርዝመት ማረጋገጫ (10 ዲጂት መሆኑን)
+        // 1. የኮድ ማረጋገጫ (ልክ 10 ዲጂት መሆን አለበት)
         if (code.length !== 10) {
-            showMsg(currentLang === 'am' ? "ስህተት፡ ኮዱ የግድ 10 ዲጂት መሆን አለበት!" : "ERROR: CODE MUST BE 10 DIGITS!", "#d00000");
+            showMsg(currentLang === 'am' ? "ስህተት፡ ኮዱ 10 ዲጂት መሆን አለበት!" : "ERROR: CODE MUST BE 10 DIGITS!", "#d00000");
             return;
         }
 
-        // 2. የገንዘብ መጠን ማረጋገጫ
-        if (!amount || isNaN(amount) || parseInt(amount) < 5) {
+        // 2. የገንዘብ መጠን ማረጋገጫ (የ10 ብዜት መሆኑን)
+        if (!amountStr || isNaN(amount) || amount <= 0) {
             showMsg(currentLang === 'am' ? "ትክክለኛ የገንዘብ መጠን ያስገቡ!" : "ENTER VALID AMOUNT!", "#d00000");
+            return;
+        }
+
+        if (amount % 10 !== 0) {
+            showMsg(currentLang === 'am' ? "መጠኑ የ10 ብዜት (10, 20, 50...) መሆን አለበት!" : "AMOUNT MUST BE MULTIPLE OF 10!", "#d00000");
             return;
         }
 
@@ -163,7 +168,6 @@
             return;
         }
 
-        // ለአድሚን እንዲታይ ዳታውን መላክ
         database.ref('deposit_requests').push({ 
             phone: userPhone, 
             transactionCode: code, 
@@ -187,7 +191,7 @@
         document.getElementById('txt-bal-label').innerText = isEn ? "YOUR BALANCE" : "ያለዎት ቀሪ ሂሳብ";
         document.getElementById('txt-curr').innerText = isEn ? "ETB" : "ብር";
         document.getElementById('lbl-code').innerText = isEn ? "TRANS. CODE (10 DIGITS)" : "የትራንዛክሽን ኮድ (10 ዲጂት)";
-        document.getElementById('lbl-amt').innerText = isEn ? "AMOUNT (MAX 5)" : "የገንዘብ መጠን (ቢበዛ 5)";
+        document.getElementById('lbl-amt').innerText = isEn ? "AMOUNT (10s ONLY)" : "የገንዘብ መጠን (10 እና ብዜቶቹ)";
         document.getElementById('btn-submit').innerText = isEn ? "SUBMIT" : "ብር አስገባ";
         document.getElementById('btn-home').innerText = isEn ? "BACK" : "ተመለስ";
         document.getElementById('txt-lang').innerText = isEn ? "LANGUAGE" : "ቋንቋ";
