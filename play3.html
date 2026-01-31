@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bunamaw - Play 3</title>
+    <title>Mita Betting - Play 3</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
@@ -98,6 +98,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    // Play 3 Path
     const gameRef = database.ref('live_game/play3');
     const resultRef = database.ref('live_game/play3_result');
 
@@ -146,7 +147,7 @@
         if (selections[i] === userName) {
             let now = Date.now();
             if (pickTimestamps[i] && (now - pickTimestamps[i]) > 30000) {
-                msgBox.innerText = currentLang === 'am' ? "ቁጥር ለመቀየር የ30 ሰከንድ ጊዜ አልፎበታል" : "30 seconds limit passed";
+                msgBox.innerText = currentLang === 'am' ? "ቁጥር ለመቀየር የ30 ሰከንድ ጊዜ አልፎበታል" : "30 seconds time limit passed to change";
                 return;
             }
             gameRef.child(i).remove().then(() => { 
@@ -201,7 +202,7 @@
         let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
         historyData.forEach(h => {
             let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
-            historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+            historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} ${h.num}</td></tr>`;
         });
         historyHTML += `</table>`;
         scrollArea.innerHTML = historyHTML;
@@ -246,7 +247,7 @@
                 let historyHTML = `<table class="selected-list" style="width: 100%; border-collapse: collapse;">`;
                 historyData.forEach(h => {
                     let textColor = h.rank === "1ኛ" ? "#FFD700" : "#00b050";
-                    historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} (ቁጥር ${h.num})</td></tr>`;
+                    historyHTML += `<tr style="color:${textColor};"><td class="id-col" style="color:#000;">ዙር ${h.r}</td><td>${h.rank}: ${h.n} ${h.num}</td></tr>`;
                 });
                 historyHTML += `</table>`;
                 scrollArea.innerHTML = historyHTML;
@@ -267,12 +268,8 @@
 
     function updateDateTime() {
         const now = new Date();
-        document.getElementById('time-label').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-        if (currentLang === 'am') {
-            document.getElementById('date-label').innerText = `${trans['am'].months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-        } else {
-            document.getElementById('date-label').innerText = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
-        }
+        document.getElementById('time-label').innerText = now.toLocaleTimeString();
+        document.getElementById('date-label').innerText = now.toDateString();
     }
     setInterval(updateDateTime, 1000);
 </script>
