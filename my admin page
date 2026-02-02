@@ -23,7 +23,6 @@
         .stat-label { font-size: 11px; color: #666; font-weight: 700; text-transform: uppercase; }
 
         .card { padding: 15px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 10px; }
-        .card-top { display: flex; justify-content: space-between; align-items: center; }
         .card-info { font-size: 13px; font-weight: 700; color: #333; line-height: 1.6; }
         
         .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -34,7 +33,6 @@
         .btn-reset { background: var(--accent); }
         .btn-edit { background: var(--info); }
         .btn-del { background: #000; }
-        .btn-view { background: #607d8b; padding: 5px 10px; margin-top: 5px; }
 
         .search-box { padding: 10px 15px; background: #eee; border-bottom: 1px solid #ddd; }
         .search-box input { width: 100%; padding: 10px; border-radius: 6px; border: 2px solid var(--primary); box-sizing: border-box; font-weight: 700; }
@@ -45,7 +43,6 @@
         .history-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         
         .btn-clear-all { background: var(--danger); width: calc(100% - 24px); margin: 12px; padding: 18px; font-weight: 900; border-radius: 10px; font-size: 15px; }
-
         .badge { background: #eee; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 5px; color: #000; }
         .pass-text { color: var(--danger); font-family: monospace; font-size: 14px; background: #fff5f5; padding: 2px 5px; border-radius: 4px; }
     </style>
@@ -57,22 +54,10 @@
 <div class="section">
     <div class="section-title"><span><i class="fas fa-chart-line"></i> Dashboard Stats</span></div>
     <div class="stat-grid">
-        <div class="stat-box">
-            <span class="stat-label">Play 1 (50)</span>
-            <span id="s-play1" class="stat-val">0</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Play 2 (100)</span>
-            <span id="s-play2" class="stat-val">0</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Play 3 (200)</span>
-            <span id="s-play3" class="stat-val">0</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Active Users</span>
-            <span id="s-users" class="stat-val">0</span>
-        </div>
+        <div class="stat-box"><span class="stat-label">Play 1 (50)</span><span id="s-play1" class="stat-val">0</span></div>
+        <div class="stat-box"><span class="stat-label">Play 2 (100)</span><span id="s-play2" class="stat-val">0</span></div>
+        <div class="stat-box"><span class="stat-label">Play 3 (200)</span><span id="s-play3" class="stat-val">0</span></div>
+        <div class="stat-box"><span class="stat-label">Active Users</span><span id="s-users" class="stat-val">0</span></div>
     </div>
 </div>
 
@@ -93,9 +78,7 @@
 
 <div class="section">
     <div class="section-title"><span><i class="fas fa-users"></i> User Management</span></div>
-    <div class="search-box">
-        <input type="text" id="user-search" placeholder="Search by name or phone..." oninput="filterUsers()">
-    </div>
+    <div class="search-box"><input type="text" id="user-search" placeholder="Search by name or phone..." oninput="filterUsers()"></div>
     <div id="user-list"></div>
 </div>
 
@@ -123,19 +106,15 @@
     // --- AUTO APPROVAL LOGIC (TELEBIRR) ---
     database.ref('incoming_sms').on('child_added', (smsSnap) => {
         const smsData = smsSnap.val();
-        const smsText = smsData.message; // ቴሌብር የሚልከው ጽሁፍ
+        const smsText = smsData.message;
 
         database.ref('deposit_requests').once('value', (depSnap) => {
             depSnap.forEach((depChild) => {
                 const depRequest = depChild.val();
                 const txCode = depRequest.transactionCode.trim();
-                
-                // የገንዘብ መጠኑን ወደ ቴሌብር ፎርማት (ETB 200.00) መቀየር
                 const formattedAmount = "ETB " + parseFloat(depRequest.amount).toFixed(2);
 
-                // ኮዱ እና ብሩ በሜሴጁ ውስጥ ካለ አውቶማቲክ አፕሩቭ ያደርገዋል
                 if (smsText.includes(txCode) && smsText.includes(formattedAmount)) {
-                    console.log("Auto-matching success for: " + txCode);
                     approveDep(depChild.key, depRequest.phone, depRequest.amount);
                     database.ref('incoming_sms/' + smsSnap.key).remove();
                 }
@@ -211,7 +190,7 @@
         const list = document.getElementById('user-list'); list.innerHTML = "";
         users.forEach(u => {
             const userPhone = u.key;
-            list.innerHTML += `<div class="card" id="user-${userPhone}">
+            list.innerHTML += `<div class="card">
                 <div class="card-info">
                     <b>NAME:</b> ${u.username || 'N/A'}<br>
                     <b>PHONE:</b> <span style="color:#002d4b; font-weight:900;">${userPhone}</span><br>
@@ -230,8 +209,8 @@
 
     function adjustBal(phone, type) {
         const el = document.getElementById('amt-' + phone);
-        const v = parseInt(el.value);
-        if (!v) return;
+        const v = parseFloat(el.value);
+        if (isNaN(v)) return;
         database.ref('users/' + phone + '/balance').transaction(c => (c || 0) + (type === 'add' ? v : -v)).then(() => {
             log(phone, type === 'add' ? 'Admin Add' : 'Admin Sub', v);
             el.value = "";
@@ -245,10 +224,7 @@
     }
 
     function delUser(key) { if(confirm("DELETE USER?")) database.ref('users/' + key).remove(); }
-
-    function log(phone, type, amount) {
-        database.ref('transaction_history').push({ phone, type, amount, time: new Date().toLocaleString() });
-    }
+    function log(phone, type, amount) { database.ref('transaction_history').push({ phone, type, amount, time: new Date().toLocaleString() }); }
     function rem(path, key) { database.ref(path + '/' + key).remove(); }
     
     function clearAllData() {
