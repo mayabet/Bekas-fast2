@@ -60,17 +60,14 @@
         <div class="stat-box">
             <span class="stat-label">Play 1 (50)</span>
             <span id="s-play1" class="stat-val">0</span>
-            <button class="btn-view" onclick="viewBets('play1')">View Bets</button>
         </div>
         <div class="stat-box">
             <span class="stat-label">Play 2 (100)</span>
             <span id="s-play2" class="stat-val">0</span>
-            <button class="btn-view" onclick="viewBets('play2')">View Bets</button>
         </div>
         <div class="stat-box">
             <span class="stat-label">Play 3 (200)</span>
             <span id="s-play3" class="stat-val">0</span>
-            <button class="btn-view" onclick="viewBets('play3')">View Bets</button>
         </div>
         <div class="stat-box">
             <span class="stat-label">Active Users</span>
@@ -122,6 +119,29 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+
+    // --- AUTO APPROVAL LOGIC (TELEBIRR) ---
+    database.ref('incoming_sms').on('child_added', (smsSnap) => {
+        const smsData = smsSnap.val();
+        const smsText = smsData.message; // ቴሌብር የሚልከው ጽሁፍ
+
+        database.ref('deposit_requests').once('value', (depSnap) => {
+            depSnap.forEach((depChild) => {
+                const depRequest = depChild.val();
+                const txCode = depRequest.transactionCode.trim();
+                
+                // የገንዘብ መጠኑን ወደ ቴሌብር ፎርማት (ETB 200.00) መቀየር
+                const formattedAmount = "ETB " + parseFloat(depRequest.amount).toFixed(2);
+
+                // ኮዱ እና ብሩ በሜሴጁ ውስጥ ካለ አውቶማቲክ አፕሩቭ ያደርገዋል
+                if (smsText.includes(txCode) && smsText.includes(formattedAmount)) {
+                    console.log("Auto-matching success for: " + txCode);
+                    approveDep(depChild.key, depRequest.phone, depRequest.amount);
+                    database.ref('incoming_sms/' + smsSnap.key).remove();
+                }
+            });
+        });
+    });
 
     // --- DEPOSITS ---
     database.ref('deposit_requests').on('value', snap => {
@@ -178,7 +198,7 @@
         });
     });
 
-    // --- USER MANAGEMENT (FIXED FOR UNDEFINED AND PLUS/MINUS) ---
+    // --- USER MANAGEMENT ---
     let allUsers = [];
     database.ref('users').on('value', snap => {
         document.getElementById('s-users').innerText = snap.numChildren();
@@ -190,7 +210,7 @@
     function renderUsers(users) {
         const list = document.getElementById('user-list'); list.innerHTML = "";
         users.forEach(u => {
-            const userPhone = u.key; // ስልክ ቁጥሩን ከ key ያገኘዋል
+            const userPhone = u.key;
             list.innerHTML += `<div class="card" id="user-${userPhone}">
                 <div class="card-info">
                     <b>NAME:</b> ${u.username || 'N/A'}<br>
@@ -199,9 +219,7 @@
                     <b>BALANCE:</b> ${(u.balance || 0).toFixed(2)} ETB
                 </div>
                 <div class="row" style="margin-top:8px; display:flex; gap:5px; align-items:center;">
-                    <input type="number" id="amt-${userPhone}" placeholder="Amt" 
-                           class="num-input"
-                           oninput="if(this.value.length > 5) this.value = this.value.slice(0,5);">
+                    <input type="number" id="amt-${userPhone}" placeholder="Amt" class="num-input">
                     <button class="btn-approve" style="background:#28a745; padding: 8px 12px;" onclick="adjustBal('${userPhone}', 'add')">+</button>
                     <button class="btn-reject" style="background:#dc3545; padding: 8px 12px;" onclick="adjustBal('${userPhone}', 'sub')">-</button>
                     <button class="btn-del" style="margin-left:auto;" onclick="delUser('${userPhone}')">DEL</button>
@@ -212,13 +230,8 @@
 
     function adjustBal(phone, type) {
         const el = document.getElementById('amt-' + phone);
-        const valStr = el.value;
-        const v = parseInt(valStr);
-        if (!v || v < 1 || valStr.length > 5) {
-            alert("Enter amount (Max 5 digits)");
-            el.value = "";
-            return;
-        }
+        const v = parseInt(el.value);
+        if (!v) return;
         database.ref('users/' + phone + '/balance').transaction(c => (c || 0) + (type === 'add' ? v : -v)).then(() => {
             log(phone, type === 'add' ? 'Admin Add' : 'Admin Sub', v);
             el.value = "";
@@ -227,27 +240,23 @@
 
     function filterUsers() {
         const q = document.getElementById('user-search').value.toLowerCase();
-        const filtered = allUsers.filter(u => 
-            u.key.includes(q) || (u.username && u.username.toLowerCase().includes(q))
-        );
+        const filtered = allUsers.filter(u => u.key.includes(q) || (u.username && u.username.toLowerCase().includes(q)));
         renderUsers(filtered);
     }
 
-    function delUser(key) { if(confirm("DELETE USER PERMANENTLY?")) database.ref('users/' + key).remove(); }
+    function delUser(key) { if(confirm("DELETE USER?")) database.ref('users/' + key).remove(); }
 
-    // --- HELPERS ---
     function log(phone, type, amount) {
         database.ref('transaction_history').push({ phone, type, amount, time: new Date().toLocaleString() });
     }
     function rem(path, key) { database.ref(path + '/' + key).remove(); }
     
     function clearAllData() {
-        if(confirm("DANGER! This will wipe ALL game bets and history. Continue?")) {
+        if(confirm("WIPE EVERYTHING?")) {
             ['deposit_requests', 'withdraw_requests', 'transaction_history', 'games', 'password_requests'].forEach(p => database.ref(p).remove());
         }
     }
 
-    // Live Stats
     ['play1', 'play2', 'play3'].forEach(g => {
         database.ref('games/' + g + '/selections').on('value', snap => {
             document.getElementById('s-' + g).innerText = snap.numChildren();
@@ -259,12 +268,9 @@
         snap.forEach(c => {
             const h = c.val();
             list.innerHTML += `<div class="history-item">
-                <span style="font-weight:700;">${h.phone}</span>
-                <span style="color:#666; font-size:10px;">${h.type}</span>
-                <span style="color:var(--success); font-weight:900;">${h.amount}</span>
+                <b>${h.phone}</b> <small>${h.type}</small> <b style="color:green">${h.amount}</b>
             </div>`;
         });
-        list.scrollTop = list.scrollHeight;
     });
 </script>
 </body>
